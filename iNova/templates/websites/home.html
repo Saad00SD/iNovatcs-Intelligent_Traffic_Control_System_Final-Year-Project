@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col items-center w-full">
+
+    <!-- Hero Banner Section -->
+    <section class="bg-center bg-no-repeat bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/conference.jpg')] bg-gray-700 bg-blend-multiply w-full">
+        <div class="px-0 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
+            <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-5xl lg:text-6xl">
+                Shaping Safer Roads with Smart Intelligence
+            </h1>
+            <p class="mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48">
+                Here at iNovaTCS, we harness the power of real-time data, AI-driven insights, and automation to optimize traffic flow,
+                detect critical incidents like accidents and fires, and respond faster — creating smarter, safer cities.
+            </p>
+            <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
+                <a href="{% url 'register' %}" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                    Get started
+                    <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </a>
+                <a href="#" class="inline-flex justify-center hover:text-gray-900 items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-400">
+                    Learn more
+                </a>  
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- Project Members -->
+    <div class="w-full max-w-6xl text-center my-12 px-0">
+        <h2 class="text-3xl font-bold dark:text-gray-300 mb-6">Project Members</h2>
+        <div class="flex flex-wrap justify-center gap-8">
+            {% for member in members %}
+            <div class="text-center">
+                <img src="{% static member.image %}" alt="{{ member.name }}"
+                     class="w-32 h-32 rounded-full shadow-lg mx-auto border-4 border-gray-300">
+                <h3 class="mt-4 text-lg font-semibold dark:text-gray-300">{{ member.name }}</h3>
+                <p class="text-gray-400">{{ member.role }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Project Description -->
+    <div class="w-full max-w-6xl text-center p-6 px-0">
+        <h2 class="text-3xl font-bold dark:text-gray-300 mb-4">About the Project</h2>
+        <p class="text-gray-400 mb-6">
+            The Intelligent Traffic Control System (iNovaTCS) is an AI-powered solution designed to transform urban mobility. 
+            It uses real-time video surveillance, computer vision, and deep learning models to detect traffic patterns and anomalies, 
+            including accidents, fires, and congestion. The system dynamically adjusts traffic signals to optimize flow, minimize 
+            delays, and enhance emergency response. Through a centralized web-based dashboard, authorities can monitor live footage, 
+            receive alerts, view incident reports, and analyze historical traffic data — all aimed at building safer, smarter, and 
+            more responsive cities.
+        </p>
+        <ul class="text-left text-gray-400 list-disc list-inside mx-auto max-w-3xl">
+            <li>Real-time vehicle detection and object tracking using AI models (YOLOv8)</li>
+            <li>Automatic detection of anomalies such as accidents and fires</li>
+            <li>Dynamic traffic signal control based on live vehicle count and flow</li>
+            <li>Centralized dashboard for monitoring, alerts, and incident reporting</li>
+            <li>Historical traffic and anomaly data for insights and analytics</li>
+            <li>Improved emergency response with instant notifications and evidence capture</li>
+        </ul>
+    </div>
+
+    <!-- Project Specifications -->
+    <div class="w-full max-w-6xl text-center p-6 px-0">
+        <h2 class="text-3xl font-bold dark:text-gray-300 mb-4">Project Specifications</h2>
+        <ul class="text-gray-400 list-disc list-inside text-left mx-auto max-w-3xl">
+            <li>Real-time traffic monitoring using CCTV video feeds</li>
+            <li>AI-based anomaly detection including accidents, fires, and traffic congestion (YOLOv8)</li>
+            <li>Automated generation of incident reports with visual evidence and timestamps</li>
+            <li>Interactive and responsive web dashboard built with Django for live control and analytics</li>
+            <li>PostgreSQL database integration for storing traffic data, reports, and system logs</li>
+            <li>Modular architecture for easy integration with emergency services and city infrastructure</li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

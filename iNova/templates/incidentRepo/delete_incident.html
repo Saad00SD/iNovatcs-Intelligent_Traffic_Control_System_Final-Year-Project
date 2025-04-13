@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static tailwind_tags %}
+{% load static %}
+
+{% block title %}  {% endblock %}
+
+{% block content %}
+    <p>Delete Incident Page</p>
+
+    <h2>Are you sure you want to delete the incident?</h2>
+    <p>Incident ID: {{ incident.incident_id }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <a href="{% url 'incident' %}">Cancel</a>
+    </form>
+    
+    
+    
+{% endblock %}

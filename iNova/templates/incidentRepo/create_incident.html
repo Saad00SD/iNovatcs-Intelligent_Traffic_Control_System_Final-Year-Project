@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static tailwind_tags %}
+{% load static %}
+
+{% block title %} Add New Incident {% endblock %}
+
+{% block content %}
+    <h2 class="text-xl font-semibold mb-4">Add New Incident</h2>
+
+    <form method="post" class="w-full max-w-lg mx-auto">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="mb-4 p-4 bg-red-100 text-red-600 border border-red-400 rounded">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {{ form.as_p }}  <!-- Render the form fields -->
+        <div class="flex justify-end mt-4">
+            <button type="submit" class="bg-blue-500 text-black px-4 py-2 rounded-lg">Save</button>
+        </div>
+    </form>
+{% endblock %}

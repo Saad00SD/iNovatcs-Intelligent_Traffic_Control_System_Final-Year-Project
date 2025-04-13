@@ -1,0 +1,191 @@
+{% load static tailwind_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fire Detection - iNovatcs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Sidebar Styling */
+    .sidebar {
+      width: 250px;
+      background-color: #2d3748;
+      color: white;
+      padding-top: 20px;
+      height: calc(100vh - 80px); /* Full height minus header (assuming header is 80px) */
+      position: sticky;
+      top: 80px; /* Ensures the sidebar is between header and footer */
+    }
+
+    .sidebar button {
+      width: 100%;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .sidebar button:hover {
+      background-color: #4a5568;
+    }
+
+    /* Main Content Styling */
+    .content {
+      margin-left: 260px; /* Space for the sidebar */
+      padding: 20px;
+      height: calc(100vh - 80px); /* Full height minus header */
+      overflow-y: auto; /* Ensures the content area is scrollable */
+    }
+
+    /* Optional: Styling for the header to make it stand out */
+    header {
+      height: 80px; /* Adjust this according to your header's height */
+      background-color: #edf2f7;
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+    }
+
+    /* Footer Styling */
+    footer {
+      background-color: #edf2f7;
+      padding: 10px 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  {% include 'partials/nav2.html' %}
+
+  <div class="flex mt"> <!-- Added mt-16 to push content below fixed header -->
+    
+    <!-- Sidebar (Left Menu) -->
+    <div class="sidebar">
+      <h2 class="text-2xl text-center text-blue-600 font-bold mb-6">Camera Footages</h2>
+      <ul class="space-y-2 font-medium">
+        <li>
+            <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                <span class="flex-1 text-left">Footage 1</span>
+            </button>
+            <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                <span class="flex-1 text-left">Footage 2</span>
+            </button>
+            <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                <span class="flex-1 text-left">Footage 3</span>
+            </button>
+            <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                <span class="flex-1 text-left">Footage 4</span>
+            </button>
+        </li>
+    </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content flex-1">
+      <h2 class="text-2xl font-bold mb-6 text text-red-600">🔥 Fire & Accident Detection (Anomaly Page)</h2>
+
+      <form action="{% url 'upload_fire_video' %}" method="post" enctype="multipart/form-data" class="mb-6">
+        {% csrf_token %}
+        <input type="file" name="video" accept="video/*" required class="block mb-4 p-2 border rounded">
+        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Upload & Detect</button>
+      </form>
+
+      {% if error %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+          <p>{{ error }}</p>
+        </div>
+      {% endif %}
+
+      <!-- Video Display Section: Original Video (Left) and Detected Output (Right) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {% if input_video_url %}
+          <div>
+            <h3 class="font-semibold text-center text-blue-600 mb-2">Player Projection Video</h3>
+            <video width="100%" controls id="originalVideo">
+              <source src="{{ input_video_url }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        {% endif %}
+
+        {% if output_video_url %}
+          <div>
+            <h3 class="font-semibold text-center text-blue-600 mb-2">Tracking Video</h3>
+            <video width="100%" controls id="predictedVideo">
+              <source src="{{ output_video_url }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Add synchronization controls -->
+      {% if input_video_url and output_video_url %}
+      <div class="mt-6 text-center">
+        <button id="syncPlayButton" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2">
+          Play Both Videos
+        </button>
+        <button id="syncPauseButton" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+          Pause Both Videos
+        </button>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const originalVideo = document.getElementById('originalVideo');
+          const predictedVideo = document.getElementById('predictedVideo');
+          const syncPlayButton = document.getElementById('syncPlayButton');
+          const syncPauseButton = document.getElementById('syncPauseButton');
+          
+          // Synchronize videos when one video is played/paused
+          originalVideo.addEventListener('play', function() {
+            predictedVideo.currentTime = originalVideo.currentTime;
+            predictedVideo.play();
+          });
+          
+          originalVideo.addEventListener('pause', function() {
+            predictedVideo.pause();
+          });
+          
+          predictedVideo.addEventListener('play', function() {
+            originalVideo.currentTime = predictedVideo.currentTime;
+            originalVideo.play();
+          });
+          
+          predictedVideo.addEventListener('pause', function() {
+            originalVideo.pause();
+          });
+          
+          // Sync button controls
+          syncPlayButton.addEventListener('click', function() {
+            originalVideo.play();
+            predictedVideo.play();
+          });
+          
+          syncPauseButton.addEventListener('click', function() {
+            originalVideo.pause();
+            predictedVideo.pause();
+          });
+          
+          // Keep videos in sync during playback
+          originalVideo.addEventListener('timeupdate', function() {
+            // Only sync if the time difference is more than 0.5 seconds
+            if (Math.abs(originalVideo.currentTime - predictedVideo.currentTime) > 0.5) {
+              predictedVideo.currentTime = originalVideo.currentTime;
+            }
+          });
+        });
+      </script>
+      {% endif %}
+    </div>
+  </div>
+
+  {% include 'partials/footer.html' %}
+
+</body>
+</html>

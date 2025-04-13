@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static tailwind_tags %}
+{% load static %}
+
+{% block title %} Incident Report {% endblock %}
+
+{% block content %}
+
+<!-- Path Location and "Add New" button  -->
+    <div class="container mt-4">
+        <div class = "row">
+            <div class="col-md-7">
+                <nav aria-label = "breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class = "breadcrumb-item"><a href="#">Incident Reports</a></li>
+                        <li class = "breadcrumb-item activate" aria-current = "page">Add New</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-md-2">
+                <a href="{% url 'create_incident' %}">
+                <button type="button" class="btn btn-primary">
+                    + Add New
+                </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+<!-- Path Location and "Add New" button  -->
+ <div class="flex justify-between items-center mb-4 pt-4"> 
+<div class="container mt-6">
+    <div class = "row">
+        <div class="col-md-5">
+            <input type="text" id="search" name="search" value="{{ search_query }}" class="border rounded-lg px-4 py-2 w-full" placeholder="Search by Incident ID or Location">
+
+        </div>
+        <div class="col-md-2">
+                <button type="button" class="bg-blue-500 text-black px-4 py-2 rounded-lg hover:bg-blue-600">
+                    Search
+                </button>
+            </a>
+        </div>
+    </div>
+</div>    
+</div>    
+
+    <table class="table-auto w-full border-collapse border border-gray-300">
+        <thead>
+            <tr>
+                <th class="border px-4 py-2">Incident ID</th>
+                <th class="border px-4 py-2">Date</th>
+                <th class="border px-4 py-2">Location</th>
+                <th class="border px-4 py-2">Description</th>
+                <th class="border px-4 py-2">Status</th>
+                <th class="border px-4 py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="incident-table-body">
+            {% for report in incident_reports %}
+            <tr>
+                <td class="border px-4 py-2">{{ report.incident_id }}</td>
+                <td class="border px-4 py-2">{{ report.date }}</td>
+                <td class="border px-4 py-2">{{ report.location }}</td>
+                <td class="border px-4 py-2">{{ report.description }}</td>
+                <td class="border px-4 py-2">{{ report.status }}</td>
+                <td class="border px-4 py-2">
+                    <a href="{% url 'update_incident' report.id %}">Edit</a> |
+                    <a href="{% url 'delete_incident' report.id %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

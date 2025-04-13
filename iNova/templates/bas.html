@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}iNova{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <h1 class="text-4xl font-bold mb-4">{% block page_title %}Welcome{% endblock %}</h1>
+            <div>
+                {% block content %}
+                    <!-- Page-specific content goes here -->
+                {% endblock %}
+            </div>
+        </div>
+</body>
+</html>

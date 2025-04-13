@@ -1,0 +1,130 @@
+<!-- navbar.html -->
+<nav class="smart-traffic-nav">
+    <!-- Left Section - Logo & Name -->
+    <div class="nav-left">
+        <img src="" class="nav-logo" alt="Traffic Logo">
+        <span class="project-name">iNovatcs</span>
+    </div>
+
+    <!-- Middle Section - Navigation Links -->
+    <div class="nav-middle">
+        <a href="{% url 'home' %}" class="nav-link {% if request.path == '/' %}traffic-active{% endif %}">Home</a>
+        <a href="{% url 'traffic' %}" class="nav-link {% if 'traffic' in request.path %}traffic-active{% endif %}">Traffic</a>
+        <a href="{% url 'anomaly' %}" class="nav-link">Anomaly</a>
+        <a href="{% url 'reports' %}" class="nav-link">Reports</a>
+    </div>
+
+    <!-- Right Section - User Profile -->
+    <div class="nav-right">
+        <span class="username">{{ request.user.username }}</span>
+        <div class="profile-dropdown">
+            <img src="" class="profile-img" alt="Profile">
+            <div class="dropdown-content">
+                <a href="">Settings</a>
+                <a href="">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .smart-traffic-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: #ffffff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-logo {
+        height: 40px;
+        width: auto;
+    }
+
+    .project-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1a237e;
+    }
+
+    .nav-middle {
+        display: flex;
+        gap: 30px;
+    }
+
+    .nav-link {
+        color: #555;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        background: #e8eaf6;
+        color: #1a237e;
+    }
+
+    .traffic-active {
+        color: #2196f3 !important;
+        border-bottom: 3px solid #2196f3;
+    }
+
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .username {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .profile-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-img {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background: white;
+        min-width: 120px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        z-index: 1;
+        border-radius: 5px;
+    }
+
+    .dropdown-content a {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background 0.3s;
+    }
+
+    .dropdown-content a:hover {
+        background: #f5f5f5;
+    }
+
+    .profile-dropdown:hover .dropdown-content {
+        display: block;
+    }
+</style>

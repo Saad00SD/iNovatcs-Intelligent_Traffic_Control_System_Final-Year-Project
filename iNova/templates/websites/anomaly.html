@@ -1,0 +1,53 @@
+{% load static tailwind_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    {% tailwind_css %}
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+
+    {% include 'partials/nav2.html' %}
+
+    <!-- Main Container -->
+    <div class="flex">
+        <!-- Sidebar (Desktop Only) -->
+        <div id="sidebar" class="w-65 h-screen p-4 bg-white dark:bg-gray-800 relative mt-16">
+            <!-- Sidebar Header -->
+            <h5 class="text-lg font-semibold text-gray-700 dark:text-gray-400 mb-6">Camera Footages</h5>
+
+            <ul class="space-y-2 font-medium">
+                <li>
+                    <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="flex-1 text-left">Footage 1</span>
+                    </button>
+                    <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="flex-1 text-left">Footage 2</span>
+                    </button>
+                    <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="flex-1 text-left">Footage 3</span>
+                    </button>
+                    <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <span class="flex-1 text-left">Footage 4</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-grow p-6 ml-72">
+            {% block content %}
+            
+            {% endblock %}
+        </main>
+    </div>
+
+    {% include 'partials/footer.html' %}
+
+</body>
+</html>
