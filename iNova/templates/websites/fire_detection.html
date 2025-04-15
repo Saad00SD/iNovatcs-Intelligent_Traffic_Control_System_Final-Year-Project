@@ -1,88 +1,6 @@
-{% load static tailwind_tags %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Fire Detection - iNovatcs</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Sidebar Styling */
-    .sidebar {
-      width: 250px;
-      background-color: #2d3748;
-      color: white;
-      padding-top: 20px;
-      height: calc(100vh - 80px); /* Full height minus header (assuming header is 80px) */
-      position: sticky;
-      top: 80px; /* Ensures the sidebar is between header and footer */
-    }
-
-    .sidebar button {
-      width: 100%;
-      padding: 10px;
-      text-align: left;
-    }
-
-    .sidebar button:hover {
-      background-color: #4a5568;
-    }
-
-    /* Main Content Styling */
-    .content {
-      margin-left: 260px; /* Space for the sidebar */
-      padding: 20px;
-      height: calc(100vh - 80px); /* Full height minus header */
-      overflow-y: auto; /* Ensures the content area is scrollable */
-    }
-
-    /* Optional: Styling for the header to make it stand out */
-    header {
-      height: 80px; /* Adjust this according to your header's height */
-      background-color: #edf2f7;
-      padding: 10px 20px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 10;
-    }
-
-    /* Footer Styling */
-    footer {
-      background-color: #edf2f7;
-      padding: 10px 20px;
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
-
-  {% include 'partials/nav2.html' %}
-
-  <div class="flex mt"> <!-- Added mt-16 to push content below fixed header -->
-    
-    <!-- Sidebar (Left Menu) -->
-    <div class="sidebar">
-      <h2 class="text-2xl text-center text-blue-600 font-bold mb-6">Camera Footages</h2>
-      <ul class="space-y-2 font-medium">
-        <li>
-            <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="flex-1 text-left">Footage 1</span>
-            </button>
-            <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="flex-1 text-left">Footage 2</span>
-            </button>
-            <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="flex-1 text-left">Footage 3</span>
-            </button>
-            <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                <span class="flex-1 text-left">Footage 4</span>
-            </button>
-        </li>
-    </ul>
-    </div>
+{% block content %}
 
     <!-- Main Content -->
     <div class="content flex-1">
@@ -185,7 +103,4 @@
     </div>
   </div>
 
-  {% include 'partials/footer.html' %}
-
-</body>
-</html>
+{% endblock %}

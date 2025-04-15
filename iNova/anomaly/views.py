@@ -7,8 +7,25 @@ from .yolo_fire import run_fire_detection
 # def anomaly(request):
 #     return render(request, 'websites/anomaly.html')
 
+from django.shortcuts import render
+
+# Views for each footage
+def foot_1(request):
+    return render(request, 'Anomaly_pages/footage_1.html')
+
+def foot_2(request):
+    return render(request, 'Anomaly_pages/footage_2.html')
+
+def foot_3(request):
+    return render(request, 'Anomaly_pages/footage_3.html')
+
+def foot_4(request):
+    return render(request, 'Anomaly_pages/footage_4.html')
+
+
+
 def anomaly(request):
-    return render(request, 'websites/fire_detection.html')
+    return render(request, 'websites/anomaly.html')
 
 def fire_detection(request):
     return render(request, 'websites/fire_detection.html')

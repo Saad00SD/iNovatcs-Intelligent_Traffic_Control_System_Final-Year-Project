@@ -1,52 +1,93 @@
-{% load static tailwind_tags %}
 {% load static %}
+{% load static tailwind_tags %}
+
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>Traffic & Anomaly Detection</title>
     {% tailwind_css %}
+    <style>
+        /* Sidebar Styling */
+        .sidebar {
+          width: 250px;
+          background-color: #2d3748;
+          color: white;
+          padding-top: 20px;
+          height: calc(100vh - 80px); /* Full height minus header */
+          position: sticky;
+          top: 80px; /* Ensures the sidebar is between header and footer */
+        }
+
+        .sidebar button {
+          width: 100%;
+          padding: 10px;
+          text-align: left;
+        }
+
+        .sidebar button:hover {
+          background-color: #4a5568;
+        }
+
+        /* Main Content Styling */
+        .content {
+          margin-left: 260px; /* Space for the sidebar */
+          padding: 20px;
+          height: calc(100vh - 80px); /* Full height minus header */
+          overflow-y: auto; /* Ensures the content area is scrollable */
+        }
+    </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900">
-
     {% include 'partials/nav2.html' %}
-
-    <!-- Main Container -->
+    
     <div class="flex">
-        <!-- Sidebar (Desktop Only) -->
-        <div id="sidebar" class="w-65 h-screen p-4 bg-white dark:bg-gray-800 relative mt-16">
+        <!-- Sidebar  -->
+        <div id="sidebar" class="sidebar p-4 bg-white dark:bg-gray-800">
             <!-- Sidebar Header -->
-            <h5 class="text-lg font-semibold text-gray-700 dark:text-gray-400 mb-6">Camera Footages</h5>
-
-            <ul class="space-y-2 font-medium">
+            <h5 class="text-lg font-semibold text-gray-700 dark:text-gray-400 mb-6">Footages</h5>
+            <ul>
                 <li>
-                    <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <span class="flex-1 text-left">Footage 1</span>
-                    </button>
-                    <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <span class="flex-1 text-left">Footage 2</span>
-                    </button>
-                    <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <span class="flex-1 text-left">Footage 3</span>
-                    </button>
-                    <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <span class="flex-1 text-left">Footage 4</span>
-                    </button>
+                    <a href="{% url 'foot_1' %}">
+                        <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                            Footage 1
+                        </button>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'foot_2' %}">
+                        <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                            Footage 2
+                        </button>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'foot_3' %}">
+                        <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                            Footage 3
+                        </button>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'foot_4' %}">
+                        <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                            Footage 4
+                        </button>
+                    </a>
                 </li>
             </ul>
         </div>
 
-        <!-- Main Content -->
-        <main class="flex-grow p-6 ml-72">
+        <!-- Main Content Section -->
+        <div class="content w-full p-6">
             {% block content %}
-            
+                <!-- Dynamic content from different footages -->
             {% endblock %}
-        </main>
+        </div>
     </div>
-
     {% include 'partials/footer.html' %}
 
 </body>
