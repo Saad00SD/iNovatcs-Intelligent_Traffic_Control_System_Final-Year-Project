@@ -8,10 +8,10 @@ Home
 {% block content %}
 
 <div class="flex flex-col items-center w-full">
-
     <!-- Hero Banner Section -->
-    <section class="bg-center bg-no-repeat bg-[url('https://flowbite.s3.amazonaws.com/docs/jumbotron/conference.jpg')] bg-gray-700 bg-blend-multiply w-full">
-        <div class="px-0 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
+    <section class="pt-20 bg-center bg-no-repeat bg-cover bg-gray-700 bg-blend-multiply w-full"
+         style="background-image: url({% static "images/hero.png" %});">
+   <div class="px-0 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
             <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-5xl lg:text-6xl">
                 Shaping Safer Roads with Smart Intelligence
             </h1>
@@ -26,63 +26,245 @@ Home
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                     </svg>
                 </a>
-                <a href="#" class="inline-flex justify-center hover:text-gray-900 items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-400">
+                <a href="{% url 'home' %}#about" class="inline-flex justify-center hover:text-gray-900 items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-400">
                     Learn more
                 </a>  
             </div>
         </div>
     </section>
 
-    
-
-    <!-- Project Members -->
-    <div class="w-full max-w-6xl text-center my-12 px-0">
-        <h2 class="text-3xl font-bold dark:text-gray-300 mb-6">Project Members</h2>
-        <div class="flex flex-wrap justify-center gap-8">
-            {% for member in members %}
-            <div class="text-center">
-                <img src="{% static member.image %}" alt="{{ member.name }}"
-                     class="w-32 h-32 rounded-full shadow-lg mx-auto border-4 border-gray-300">
-                <h3 class="mt-4 text-lg font-semibold dark:text-gray-300">{{ member.name }}</h3>
-                <p class="text-gray-400">{{ member.role }}</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
 
     <!-- Project Description -->
-    <div class="w-full max-w-6xl text-center p-6 px-0">
-        <h2 class="text-3xl font-bold dark:text-gray-300 mb-4">About the Project</h2>
-        <p class="text-gray-400 mb-6">
-            The Intelligent Traffic Control System (iNovaTCS) is an AI-powered solution designed to transform urban mobility. 
-            It uses real-time video surveillance, computer vision, and deep learning models to detect traffic patterns and anomalies, 
-            including accidents, fires, and congestion. The system dynamically adjusts traffic signals to optimize flow, minimize 
-            delays, and enhance emergency response. Through a centralized web-based dashboard, authorities can monitor live footage, 
-            receive alerts, view incident reports, and analyze historical traffic data — all aimed at building safer, smarter, and 
-            more responsive cities.
-        </p>
-        <ul class="text-left text-gray-400 list-disc list-inside mx-auto max-w-3xl">
-            <li>Real-time vehicle detection and object tracking using AI models (YOLOv8)</li>
-            <li>Automatic detection of anomalies such as accidents and fires</li>
-            <li>Dynamic traffic signal control based on live vehicle count and flow</li>
-            <li>Centralized dashboard for monitoring, alerts, and incident reporting</li>
-            <li>Historical traffic and anomaly data for insights and analytics</li>
-            <li>Improved emergency response with instant notifications and evidence capture</li>
-        </ul>
-    </div>
+    <section class="py-24 relative">
+        <div class="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
+          <div class="w-full justify-start items-center gap-12 grid lg:grid-cols-2 grid-cols-1">
+            <!-- Left Content -->
+            <div class="w-full flex-col justify-start lg:items-start items-center gap-10 inline-flex">
+              <div class="w-full flex-col justify-start lg:items-start items-center gap-6 flex">
+                <h2 id="about" class="text-gray-900 text-5xl font-bold font-manrope leading-snug lg:text-start text-center">
+                  About the Project
+                </h2>
+                <p class="text-white-600 text-lg font-normal leading-relaxed lg:text-start text-center">
+                  The Intelligent Traffic Control System (iNovaTCS) is an AI-powered solution designed to transform urban mobility. 
+                  It uses real-time video surveillance, computer vision, and deep learning models to detect traffic patterns and anomalies, 
+                  including accidents, fires, and congestion. The system dynamically adjusts traffic signals to optimize flow, minimize 
+                  delays, and enhance emergency response. Through a centralized web-based dashboard, authorities can monitor live footage, 
+                  receive alerts, view incident reports, and analyze historical traffic data — all aimed at building safer, smarter, and 
+                  more responsive cities.
+                </p>
+                <ul class="text-left text-white-600 list-disc list-inside pl-2 text-base max-w-xl">
+                  <li>Real-time vehicle detection and object tracking using AI models (YOLOv8)</li>
+                  <li>Automatic detection of anomalies such as accidents and fires</li>
+                  <li>Dynamic traffic signal control based on live vehicle count and flow</li>
+                  <li>Centralized dashboard for monitoring, alerts, and incident reporting</li>
+                  <li>Historical traffic and anomaly data for insights and analytics</li>
+                  <li>Improved emergency response with instant notifications and evidence capture</li>
+                </ul>
+              </div>
+            </div>
+      
+            <!-- Right Image -->
+            <img class="lg:mx-0 mx-auto h-full w-full rounded-3xl object-cover" src="{% static 'images/home_page_image.jpg' %}" alt="About the Project Image" />
+          </div>
+        </div>
+      </section>
+      
+      
 
     <!-- Project Specifications -->
-    <div class="w-full max-w-6xl text-center p-6 px-0">
-        <h2 class="text-3xl font-bold dark:text-gray-300 mb-4">Project Specifications</h2>
-        <ul class="text-gray-400 list-disc list-inside text-left mx-auto max-w-3xl">
-            <li>Real-time traffic monitoring using CCTV video feeds</li>
-            <li>AI-based anomaly detection including accidents, fires, and traffic congestion (YOLOv8)</li>
-            <li>Automated generation of incident reports with visual evidence and timestamps</li>
-            <li>Interactive and responsive web dashboard built with Django for live control and analytics</li>
-            <li>PostgreSQL database integration for storing traffic data, reports, and system logs</li>
-            <li>Modular architecture for easy integration with emergency services and city infrastructure</li>
-        </ul>
-    </div>
+    <section class="py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="mb-12 text-center">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Key Specifications of iNovaTCS</h2>
+            <p class="text-lg text-black-500 max-w-3xl mx-auto">
+              Explore how our Intelligent Traffic Control System uses AI, automation, and modular design to ensure smarter, safer urban mobility.
+            </p>
+          </div>
+      
+          <!-- Cards Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div class="group bg-gray-100 rounded-2xl p-8 transition-all duration-500 hover:bg-indigo-600">
+              <div class="bg-white rounded-full flex justify-center items-center mb-6 w-16 h-16 mx-auto">
+                📹
+              </div>
+              <h4 class="text-2xl font-semibold text-gray-900 mb-3 text-center transition group-hover:text-white">
+                Live Traffic Monitoring
+              </h4>
+              <p class="text-base font-normal text-gray-500 text-center transition group-hover:text-white">
+                Real-time vehicle detection through CCTV feeds with smart tracking.
+              </p>
+            </div>
+      
+            <!-- Card 2 -->
+            <div class="group bg-gray-100 rounded-2xl p-8 transition-all duration-500 hover:bg-indigo-600">
+              <div class="bg-white rounded-full flex justify-center items-center mb-6 w-16 h-16 mx-auto">
+                🤖
+              </div>
+              <h4 class="text-2xl font-semibold text-gray-900 mb-3 text-center transition group-hover:text-white">
+                AI Anomaly Detection
+              </h4>
+              <p class="text-base font-normal text-gray-500 text-center transition group-hover:text-white">
+                Detects accidents, fires, and congestion using YOLOv8 deep learning.
+              </p>
+            </div>
+      
+            <!-- Card 3 -->
+            <div class="group bg-gray-100 rounded-2xl p-8 transition-all duration-500 hover:bg-indigo-600">
+              <div class="bg-white rounded-full flex justify-center items-center mb-6 w-16 h-16 mx-auto">
+                📝
+              </div>
+              <h4 class="text-2xl font-semibold text-gray-900 mb-3 text-center transition group-hover:text-white">
+                Incident Reports
+              </h4>
+              <p class="text-base font-normal text-gray-500 text-center transition group-hover:text-white">
+                Automatically generate reports with visual evidence and timestamps.
+              </p>
+            </div>
+      
+            <!-- Card 4 -->
+            <div class="group bg-gray-100 rounded-2xl p-8 transition-all duration-500 hover:bg-indigo-600">
+              <div class="bg-white rounded-full flex justify-center items-center mb-6 w-16 h-16 mx-auto">
+                💻
+              </div>
+              <h4 class="text-2xl font-semibold text-gray-900 mb-3 text-center transition group-hover:text-white">
+                Smart Web Dashboard
+              </h4>
+              <p class="text-base font-normal text-gray-500 text-center transition group-hover:text-white">
+                Manage traffic in real-time through an interactive Django dashboard.
+              </p>
+            </div>
+      
+            <!-- Card 5 -->
+            <div class="group bg-gray-100 rounded-2xl p-8 transition-all duration-500 hover:bg-indigo-600">
+              <div class="bg-white rounded-full flex justify-center items-center mb-6 w-16 h-16 mx-auto">
+                🗃️
+              </div>
+              <h4 class="text-2xl font-semibold text-gray-900 mb-3 text-center transition group-hover:text-white">
+                PostgreSQL Storage
+              </h4>
+              <p class="text-base font-normal text-gray-500 text-center transition group-hover:text-white">
+                Efficiently stores traffic, incident, and system logs with PostgreSQL.
+              </p>
+            </div>
+      
+            <!-- Card 6 -->
+            <div class="group bg-gray-100 rounded-2xl p-8 transition-all duration-500 hover:bg-indigo-600">
+              <div class="bg-white rounded-full flex justify-center items-center mb-6 w-16 h-16 mx-auto">
+                🧩
+              </div>
+              <h4 class="text-2xl font-semibold text-gray-900 mb-3 text-center transition group-hover:text-white">
+                Modular Integration
+              </h4>
+              <p class="text-base font-normal text-gray-500 text-center transition group-hover:text-white">
+                Easily integrate with emergency services and smart city systems.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
+<!-- Our Team -->
+<section class="py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mb-12">
+            <h2 class="font-manrope text-5xl text-center font-bold text-gray-900">Our Team</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <!-- Member 1 -->
+            <div class="block group text-center">
+                <div class="relative mb-6">
+                    <img src="{% static 'images/members/member1.jpg' %}" alt="Saad"
+                        class="w-40 h-40 rounded-full mx-auto transition-all duration-500 object-cover border border-solid border-transparent group-hover:border-indigo-600" />
+                </div>
+                <h4 class="text-xl font-semibold text-gray-900 mb-2 capitalize transition-all duration-500 group-hover:text-indigo-600">
+                    Saad
+                </h4>
+                <span class="text-gray-500 block transition-all duration-500 group-hover:text-gray-900">Project Lead</span>
+            </div>
+
+            <!-- Member 2 -->
+            <div class="block group text-center">
+                <div class="relative mb-6">
+                    <img src="{% static 'images/members/member2.jpg' %}" alt="Dhilham"
+                        class="w-40 h-40 rounded-full mx-auto transition-all duration-500 object-cover border border-solid border-transparent group-hover:border-indigo-600" />
+                </div>
+                <h4 class="text-xl font-semibold text-gray-900 mb-2 capitalize transition-all duration-500 group-hover:text-indigo-600">
+                    Dhilham
+                </h4>
+                <span class="text-gray-500 block transition-all duration-500 group-hover:text-gray-900">Front-End Developer</span>
+            </div>
+
+            <!-- Member 3 -->
+            <div class="block group text-center">
+                <div class="relative mb-6">
+                    <img src="{% static 'images/members/member3.jpg' %}" alt="Rikhaz"
+                        class="w-40 h-40 rounded-full mx-auto transition-all duration-500 object-cover border border-solid border-transparent group-hover:border-indigo-600" />
+                </div>
+                <h4 class="text-xl font-semibold text-gray-900 mb-2 capitalize transition-all duration-500 group-hover:text-indigo-600">
+                    Rikhaz
+                </h4>
+                <span class="text-gray-500 block transition-all duration-500 group-hover:text-gray-900">Front-End Developer</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- Contact Us -->
+    <section class="py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-12">
+                <h2 id="contact" class="text-gray-900 text-5xl font-bold font-manrope leading-snug lg:text-start text-center">
+                    Contact Us
+                  </h2>            
+            </div>
+            
+
+          <div class="grid lg:grid-cols-2 grid-cols-1">
+              <div class="lg:mb-0 mb-10">
+                  <div class="group w-full h-full">
+                      <div class="relative h-full">
+                          <img src="https://pagedone.io/asset/uploads/1696488602.png" alt="ContactUs tailwind section" class="w-full h-full lg:rounded-l-2xl rounded-2xl bg-blend-multiply bg-indigo-700 object-cover"/>
+                          <h1 class="font-manrope text-white text-4xl font-bold leading-10 absolute top-11 left-11">Contact us</h1>
+                          <div class="absolute bottom-0 w-full lg:p-11 p-5">
+                              <div class="bg-white rounded-lg p-6 block">
+                                  <a href="javascript:;" class="flex items-center mb-6">
+                                      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M22.3092 18.3098C22.0157 18.198 21.8689 18.1421 21.7145 18.1287C21.56 18.1154 21.4058 18.1453 21.0975 18.205L17.8126 18.8416C17.4392 18.9139 17.2525 18.9501 17.0616 18.9206C16.8707 18.891 16.7141 18.8058 16.4008 18.6353C13.8644 17.2551 12.1853 15.6617 11.1192 13.3695C10.9964 13.1055 10.935 12.9735 10.9133 12.8017C10.8917 12.6298 10.9218 12.4684 10.982 12.1456L11.6196 8.72559C11.6759 8.42342 11.7041 8.27233 11.6908 8.12115C11.6775 7.96998 11.6234 7.82612 11.5153 7.5384L10.6314 5.18758C10.37 4.49217 10.2392 4.14447 9.95437 3.94723C9.6695 3.75 9.29804 3.75 8.5551 3.75H5.85778C4.58478 3.75 3.58264 4.8018 3.77336 6.06012C4.24735 9.20085 5.64674 14.8966 9.73544 18.9853C14.0295 23.2794 20.2151 25.1426 23.6187 25.884C24.9335 26.1696 26.0993 25.1448 26.0993 23.7985V21.2824C26.0993 20.5428 26.0993 20.173 25.9034 19.8888C25.7076 19.6046 25.362 19.4729 24.6708 19.2096L22.3092 18.3098Z" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                      </svg>
+                                      <h5 class="text-black text-base font-normal leading-6 ml-5">+94 766533626</h5>
+                                  </a>
+                                  <a href="javascript:;" class="flex items-center mb-6">
+                                      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M2.81501 8.75L10.1985 13.6191C12.8358 15.2015 14.1544 15.9927 15.6032 15.9582C17.0519 15.9237 18.3315 15.0707 20.8905 13.3647L27.185 8.75M12.5 25H17.5C22.214 25 24.5711 25 26.0355 23.5355C27.5 22.0711 27.5 19.714 27.5 15C27.5 10.286 27.5 7.92893 26.0355 6.46447C24.5711 5 22.214 5 17.5 5H12.5C7.78595 5 5.42893 5 3.96447 6.46447C2.5 7.92893 2.5 10.286 2.5 15C2.5 19.714 2.5 22.0711 3.96447 23.5355C5.42893 25 7.78595 25 12.5 25Z" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/>
+                                      </svg>
+                                      <h5 class="text-black text-base font-normal leading-6 ml-5">iNovaTCS@gmail.com</h5>
+                                  </a>
+                                  <a href="javascript:;" class="flex items-center">
+                                      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M25 12.9169C25 17.716 21.1939 21.5832 18.2779 24.9828C16.8385 26.6609 16.1188 27.5 15 27.5C13.8812 27.5 13.1615 26.6609 11.7221 24.9828C8.80612 21.5832 5 17.716 5 12.9169C5 10.1542 6.05357 7.5046 7.92893 5.55105C9.8043 3.59749 12.3478 2.5 15 2.5C17.6522 2.5 20.1957 3.59749 22.0711 5.55105C23.9464 7.5046 25 10.1542 25 12.9169Z" stroke="#4F46E5" stroke-width="2"/>
+                                          <path d="M17.5 11.6148C17.5 13.0531 16.3807 14.219 15 14.219C13.6193 14.219 12.5 13.0531 12.5 11.6148C12.5 10.1765 13.6193 9.01058 15 9.01058C16.3807 9.01058 17.5 10.1765 17.5 11.6148Z" stroke="#4F46E5" stroke-width="2"/>
+                                      </svg>
+                                      <h5 class="text-black text-base font-normal leading-6 ml-5">Hostel A,PAF-IAST, Haripur, Pakistan</h5>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+  
+              <div class="bg-gray-50 p-5 lg:p-11 lg:rounded-r-2xl rounded-2xl">
+                  <h2 class="text-indigo-600 font-manrope text-4xl font-semibold leading-10 mb-11">Send Us A Message</h2>
+                  <input type="text" class="w-full h-12 text-gray-600 placeholder-gray-400  shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-10" placeholder="Name">
+                  <input type="text" class="w-full h-12 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-10" placeholder="Email">
+                  <input type="text" class="w-full h-12 text-gray-600 placeholder-gray-400 shadow-sm bg-transparent text-lg font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-10" placeholder="Phone">
+                  <input type="text" class="w-full h-12 text-gray-600 placeholder-gray-400 bg-transparent text-lg shadow-sm font-normal leading-7 rounded-full border border-gray-200 focus:outline-none pl-4 mb-10" placeholder="Message">
+                  <button class="w-full h-12 text-white text-base font-semibold leading-6 rounded-full transition-all duration-700 hover:bg-indigo-800 bg-indigo-600 shadow-sm">Send</button>
+          </div>
+        </div>
+      </section>
+                                              
 </div>
+
 {% endblock %}
