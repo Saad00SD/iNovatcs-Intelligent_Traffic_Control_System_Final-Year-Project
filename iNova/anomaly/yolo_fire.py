@@ -1,8 +1,9 @@
 from ultralytics import YOLO
 import os
+model  = YOLO(r'anomaly/MLModels/best.pt')
 
 def run_fire_detection(video_path, output_path):
-    model = YOLO(r'anomaly/MLModels/best.pt')
+    #model = YOLO(r'anomaly/MLModels/best.pt')
     
     # Run prediction and save the output
     results = model.predict(source=video_path, save=True, save_txt=False, project=os.path.dirname(output_path), name='predict', exist_ok=True)

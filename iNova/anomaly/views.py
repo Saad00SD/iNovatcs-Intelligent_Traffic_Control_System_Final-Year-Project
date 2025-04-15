@@ -3,6 +3,13 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
 from .yolo_fire import run_fire_detection
+from ultralytics import YOLO
+import os
+model  = YOLO(r'anomaly/MLModels/best.pt')
+
+
+from django.shortcuts import render
+
 
 # def anomaly(request):
 #     return render(request, 'websites/anomaly.html')
@@ -21,6 +28,70 @@ def foot_3(request):
 
 def foot_4(request):
     return render(request, 'Anomaly_pages/footage_4.html')
+
+
+from django.shortcuts import render
+from django.http import StreamingHttpResponse
+from django.conf import settings
+from .forms import VideoUploadForm
+import os, uuid, cv2
+
+uploaded_video_path = None  # global var for streaming
+
+def foot_1(request):
+    global uploaded_video_path
+    result_message = None
+    uploaded_video_url = None
+
+    if request.method == 'POST':
+        form = VideoUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            video = form.cleaned_data['video_file']
+            filename = f"{uuid.uuid4()}.mp4"
+            upload_path = os.path.join(settings.MEDIA_ROOT, 'uploads', filename)
+            os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+
+            with open(upload_path, 'wb+') as dest:
+                for chunk in video.chunks():
+                    dest.write(chunk)
+
+            uploaded_video_path = upload_path
+            uploaded_video_url = settings.MEDIA_URL + 'uploads/' + filename
+            result_message = "✅ Video uploaded! Scroll to see detection stream."
+    else:
+        form = VideoUploadForm()
+
+    return render(request, 'Anomaly_pages/footage_1.html', {
+        'form': form,
+        'result_message': result_message,
+        'uploaded_video_url': uploaded_video_url
+    })
+
+def gen_frames_from_uploaded():
+    global uploaded_video_path
+    cap = cv2.VideoCapture(uploaded_video_path)
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        results = model.predict(source=frame, save=False)
+        annotated = results[0].plot()
+
+        _, jpeg = cv2.imencode('.jpg', annotated)
+        frame_bytes = jpeg.tobytes()
+
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
+
+    cap.release()
+
+def video_feed_uploaded(request):
+    return StreamingHttpResponse(gen_frames_from_uploaded(), content_type='multipart/x-mixed-replace; boundary=frame')
+
+
+
 
 
 
@@ -66,33 +137,3 @@ def fire_detection(request):
 #     return render(request, 'websites/fire_detection.html', context)
 
 
-# v2
-def upload_fire_video(request):
-    context = {}
-    if request.method == 'POST' and request.FILES.get('video'):
-        video = request.FILES['video']
-        fs = FileSystemStorage()
-
-        # Save uploaded video to 'input' directory within MEDIA_ROOT
-        input_filename = fs.save(f'input/{video.name}', video)
-        full_input_path = fs.path(input_filename)
-
-        # Ensure 'output' directory exists
-        output_dir = os.path.join(settings.MEDIA_ROOT, 'output')
-        os.makedirs(output_dir, exist_ok=True)
-
-        output_filename = f'detected_{video.name.split(".")[0]}.mp4'  # Ensure it saves as .mp4
-        full_output_path = os.path.join(output_dir, output_filename)
-
-        # Process the video
-        detected_path = run_fire_detection(full_input_path, full_output_path)
-
-        if detected_path and os.path.exists(detected_path):
-            # Prepare URLs for the template
-            context['input_video_url'] = fs.url(input_filename)
-            relative_output_path = os.path.relpath(detected_path, settings.MEDIA_ROOT)
-            context['output_video_url'] = f"{settings.MEDIA_URL}{relative_output_path.replace(os.sep, '/')}"
-        else:
-            context['error'] = "Failed to process the video. Please try again."
-
-    return render(request, 'websites/fire_detection.html', context)
