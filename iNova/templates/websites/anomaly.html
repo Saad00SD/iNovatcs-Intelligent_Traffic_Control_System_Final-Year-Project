@@ -6,23 +6,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic & Anomaly Detection</title>
+    <title>Anomaly Detection</title>
     {% tailwind_css %}
     <style>
         /* Sidebar Styling */
         .sidebar {
-          width: 250px;
+          width: 220px;
           background-color: #2d3748;
           color: white;
           padding-top: 20px;
-          height: calc(100vh - 80px); /* Full height minus header */
+          height: calc(100vh - 80px);
           position: sticky;
-          top: 80px; /* Ensures the sidebar is between header and footer */
+          top: 80px;
         }
 
         .sidebar button {
           width: 100%;
-          padding: 10px;
+          padding: 8px 10px;
           text-align: left;
         }
 
@@ -32,46 +32,50 @@
 
         /* Main Content Styling */
         .content {
-          margin-left: 260px; /* Space for the sidebar */
           padding: 20px;
-          height: calc(100vh - 80px); /* Full height minus header */
-          overflow-y: auto; /* Ensures the content area is scrollable */
+          height: calc(100vh - 80px);
+          overflow-y: auto;
+        }
+
+        /* Light text for headings */
+        h1, h2, h3, h4, h5, h6, p, label, span {
+          color: white;
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900">
+<body class="bg-gray-900 text-white">
     {% include 'partials/nav2.html' %}
     
     <div class="flex">
         <!-- Sidebar  -->
-        <div id="sidebar" class="sidebar p-4 bg-white dark:bg-gray-800">
+        <div id="sidebar" class="sidebar p-4">
             <!-- Sidebar Header -->
-            <h5 class="text-lg font-semibold text-gray-700 dark:text-gray-400 mb-6">Footages</h5>
+            <h5 class="text-lg font-semibold text-white mb-6">Footages</h5>
             <ul>
                 <li>
                     <a href="{% url 'foot_1' %}">
-                        <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <button type="button" class="flex items-center w-full p-3 text-white rounded-lg hover:bg-gray-700">
                             Footage 1
                         </button>
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'foot_2' %}">
-                        <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <button type="button" class="flex items-center w-full p-3 text-white rounded-lg hover:bg-gray-700">
                             Footage 2
                         </button>
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'foot_3' %}">
-                        <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <button type="button" class="flex items-center w-full p-3 text-white rounded-lg hover:bg-gray-700">
                             Footage 3
                         </button>
                     </a>
                 </li>
                 <li>
                     <a href="{% url 'foot_4' %}">
-                        <button type="button" class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <button type="button" class="flex items-center w-full p-3 text-white rounded-lg hover:bg-gray-700">
                             Footage 4
                         </button>
                     </a>
@@ -82,11 +86,11 @@
         <!-- Main Content Section -->
         <div class="content w-full p-6">
             {% block content %}
-                <!-- Dynamic content from different footages -->
+                <h1 class="text-2xl font-bold text-white">Hello, Welcome to the anomaly page</h1>
             {% endblock %}
         </div>
     </div>
-    {% include 'partials/footer.html' %}
 
+    {% include 'partials/footer.html' %}
 </body>
 </html>

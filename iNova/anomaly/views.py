@@ -5,6 +5,8 @@ import os
 from .yolo_fire import run_fire_detection
 from ultralytics import YOLO
 import os
+import pandas
+import time
 model  = YOLO(r'anomaly/MLModels/best.pt')
 
 
@@ -37,6 +39,9 @@ from .forms import VideoUploadForm
 import os, uuid, cv2
 
 uploaded_video_path = None  # global var for streaming
+is_fire  = False
+is_smoke = False
+
 
 def foot_1(request):
     global uploaded_video_path
@@ -60,15 +65,131 @@ def foot_1(request):
             result_message = "✅ Video uploaded! Scroll to see detection stream."
     else:
         form = VideoUploadForm()
+    
+    message = ""
+
+    if is_smoke:
+        message += 'Smoke Detected'
+    
+    if is_fire:
+        message += ' Fire Detected'
 
     return render(request, 'Anomaly_pages/footage_1.html', {
+        'form': form,
+        'result_message': result_message,
+        'uploaded_video_url': uploaded_video_url,
+        'message': message
+    })
+
+def foot_2(request):
+    global uploaded_video_path
+    result_message = None
+    uploaded_video_url = None
+
+    if request.method == 'POST':
+        form = VideoUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            video = form.cleaned_data['video_file']
+            filename = f"{uuid.uuid4()}.mp4"
+            upload_path = os.path.join(settings.MEDIA_ROOT, 'uploads', filename)
+            os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+
+            with open(upload_path, 'wb+') as dest:
+                for chunk in video.chunks():
+                    dest.write(chunk)
+
+            uploaded_video_path = upload_path
+            uploaded_video_url = settings.MEDIA_URL + 'uploads/' + filename
+            result_message = "✅ Video uploaded! Scroll to see detection stream."
+    else:
+        form = VideoUploadForm()
+    
+    message = ""
+
+    if is_smoke:
+        message += 'Smoke Detected'
+    
+    if is_fire:
+        message += ' Fire Detected'
+
+    return render(request, 'Anomaly_pages/footage_2.html', {
         'form': form,
         'result_message': result_message,
         'uploaded_video_url': uploaded_video_url
     })
 
+
+def foot_3(request):
+    global uploaded_video_path
+    result_message = None
+    uploaded_video_url = None
+
+    if request.method == 'POST':
+        form = VideoUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            video = form.cleaned_data['video_file']
+            filename = f"{uuid.uuid4()}.mp4"
+            upload_path = os.path.join(settings.MEDIA_ROOT, 'uploads', filename)
+            os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+
+            with open(upload_path, 'wb+') as dest:
+                for chunk in video.chunks():
+                    dest.write(chunk)
+
+            uploaded_video_path = upload_path
+            uploaded_video_url = settings.MEDIA_URL + 'uploads/' + filename
+            result_message = "✅ Video uploaded! Scroll to see detection stream."
+    else:
+        form = VideoUploadForm()
+    
+    message = ""
+
+    if is_smoke:
+        message += 'Smoke Detected'
+    
+    if is_fire:
+        message += ' Fire Detected'
+
+    return render(request, 'Anomaly_pages/footage_3.html', {
+        'form': form,
+        'result_message': result_message,
+        'uploaded_video_url': uploaded_video_url
+    })
+
+def foot_4(request):
+    global uploaded_video_path
+    result_message = None
+    uploaded_video_url = None
+
+    if request.method == 'POST':
+        form = VideoUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            video = form.cleaned_data['video_file']
+            filename = f"{uuid.uuid4()}.mp4"
+            upload_path = os.path.join(settings.MEDIA_ROOT, 'uploads', filename)
+            os.makedirs(os.path.dirname(upload_path), exist_ok=True)
+
+            with open(upload_path, 'wb+') as dest:
+                for chunk in video.chunks():
+                    dest.write(chunk)
+
+            uploaded_video_path = upload_path
+            uploaded_video_url = settings.MEDIA_URL + 'uploads/' + filename
+            result_message = "✅ Video uploaded! Scroll to see detection stream."
+    else:
+        form = VideoUploadForm()
+
+    return render(request, 'Anomaly_pages/footage_4.html', {
+        'form': form,
+        'result_message': result_message,
+        'uploaded_video_url': uploaded_video_url
+    })
+
+
+
 def gen_frames_from_uploaded():
     global uploaded_video_path
+    global is_fire, is_smoke
     cap = cv2.VideoCapture(uploaded_video_path)
 
     while cap.isOpened():
@@ -77,20 +198,40 @@ def gen_frames_from_uploaded():
             break
 
         results = model.predict(source=frame, save=False)
+        
+        for i in results:
+            f = [int(j) for j in i.boxes.cls]
+            print("Fires:", f.count(2))
+            is_fire = f.count(2)
+
         annotated = results[0].plot()
+        if is_fire:
+            text = "Fire Detected, Kindly take action"
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            font_scale = 1
+            color = (0, 255, 0)
+            thickness = 2
+            position = (50, 50)
+
+            cv2.putText(annotated, text, position, font, font_scale, color, thickness)
 
         _, jpeg = cv2.imencode('.jpg', annotated)
         frame_bytes = jpeg.tobytes()
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-
     cap.release()
 
 def video_feed_uploaded(request):
     return StreamingHttpResponse(gen_frames_from_uploaded(), content_type='multipart/x-mixed-replace; boundary=frame')
 
 
+def detect():
+    if is_fire:
+        yield "Fire Detected <br>"
+
+def alert_update(request):
+    return StreamingHttpResponse(detect(), content_type='text/event-stream')
 
 
 

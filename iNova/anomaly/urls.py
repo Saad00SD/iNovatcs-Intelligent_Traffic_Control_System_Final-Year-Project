@@ -19,6 +19,10 @@ urlpatterns = [
     path('footage_3/', views.foot_3, name='foot_3'),
     path('footage_4/', views.foot_4, name='foot_4'),
     path('video_feed_uploaded/', views.video_feed_uploaded, name='video_feed_uploaded'),  # Add this
+    # path("detection/", views.alert_update,  name="detection")
+    # path('video/', views.video_feed_uploaded, name='video')
+
+
 
 
 
