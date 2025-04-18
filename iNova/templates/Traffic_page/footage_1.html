@@ -1,7 +1,16 @@
 {% extends 'websites/traffic.html' %}
-
 {% block content %}
-        <h2 class="text-2xl font-bold mb-6">Footage 1: Traffic Page</h2>
-         <h1>Footage 1 - Traffic</h1>
-    
+
+<h2 class="text-2xl font-bold mb-4">Upload Traffic Videos</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for i in "1234" %}
+        <label>Video {{ i }}:</label>
+        <input type="file" name="video{{ i }}" accept="video/*" required><br><br>
+    {% endfor %}
+    <button type="submit">Upload & Analyze</button>
+</form>
+
+
 {% endblock %}

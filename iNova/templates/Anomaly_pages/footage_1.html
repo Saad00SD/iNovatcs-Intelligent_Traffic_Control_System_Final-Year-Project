@@ -49,30 +49,22 @@
 </div>
 
 <script>
-    // Create an EventSource (or use AJAX for more compatibility)
-    function fetchStreamedText() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', "{% url 'detection' %}", true);  // Make GET request to the streaming URL
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 3) {  // When receiving data from the server
-                // Append the new text data to the text container
-                document.getElementById("text-cont").innerHTML = xhr.responseText;
-            }
-        };
-        xhr.send();
-    }
-
-    // Start fetching the streamed text
-    fetchStreamedText();
-
-    // Listen for the fire detection event and show the message
+    // Create an EventSource to listen for fire detection updates
     var eventSource = new EventSource("{% url 'detection' %}");
+
+    // When the server sends a message, check if it's "Fire Detected!" and show the message
     eventSource.onmessage = function(event) {
-        if (event.data === "Fire Detected") {
-            // Show the fire detection message
+        if (event.data === "Fire Detected!") {
+            // Show the fire detection message on the same page
             document.getElementById("fire-message").classList.remove("hidden");
         }
     };
+
+    // Optional: Automatically hide the fire detection message after 10 seconds
+    setTimeout(function() {
+        document.getElementById("fire-message").classList.add("hidden");
+    }, 10000); // Message will hide after 10 seconds
 </script>
+
 {% endif %}
 {% endblock %}

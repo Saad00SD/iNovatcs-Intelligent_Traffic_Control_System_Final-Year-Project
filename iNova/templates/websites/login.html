@@ -3,50 +3,34 @@
 {% load static %}
 
 {% block content %}
-
-<!-- Hero Section with Fullscreen Background Image -->
-<section class="pt-0 bg-center bg-no-repeat bg-cover w-full"
-         style="background-image: url({% static 'images/login_page_bg.png' %}); height: 80vh;">
-    <div class="px-0 mx-auto max-w-screen-xl text-center py-0 lg:py-0">
-
-        <!-- Centered Login Form Section with added margin-top -->
+<section class="pt-0 bg-center bg-no-repeat bg-cover w-full" style="background-image: url({% static 'images/login_page_bg.png' %}); height: 80vh;">
+    <div class="px-0 mx-auto max-w-screen-xl py-0 lg:py-0">
         <div class="h-full w-screen flex justify-center items-center">
-            <div class="w-full md:w-1/2 mt-20"> <!-- Added margin-top here -->
+            <div class="w-full md:w-1/2 mt-20">
                 <div class="bg-gradient-to-r from-blue-500 to-purple-500 rounded-[26px] p-6 w-full max-w-md shadow-lg">
                     <div class="border-[10px] border-transparent rounded-[20px] dark:bg-gray-900 bg-white p-6">
                         <h1 class="text-3xl font-bold dark:text-gray-400 text-center mb-6">
                             Log in
                         </h1>
-                        
-                        <!-- Login Form -->
-                        <form action="#" method="post" class="space-y-4 mt-4">
-                            <div class="space-y-2">
-                                <label for="username" class="dark:text-gray-400 text-lg text-left block">Username</label>
-                                <input id="username" class="border p-3 dark:bg-indigo-700 dark:text-gray-300 dark:border-gray-700 
-                                        shadow-md placeholder:text-base focus:scale-105 ease-in-out duration-300 
-                                        border-gray-300 rounded-lg w-full" type="text" placeholder="username" required />
-                            </div>
-                            <div class="space-y-2">
-                                <label for="password" class="dark:text-gray-400 text-lg text-left block">Password</label>
-                                <input id="password" class="border p-3 shadow-md dark:bg-indigo-700 dark:text-gray-300 
-                                        dark:border-gray-700 placeholder:text-base focus:scale-105 ease-in-out duration-300 
-                                        border-gray-300 rounded-lg w-full" type="password" placeholder="Password" required />
-                            </div>
+                        <form action="" method="post" class="space-y-6 mt-4">
+                            {% csrf_token %}
                             
-                            <!-- "Forget your password?" link -->
-                            <div class="text-left">
-                                <a class="text-blue-400 text-sm hover:underline" href="#">Forget your password?</a>
+                            <!-- Username Field -->
+                            <div class="flex flex-col text-left">
+                                <label for="username" class="mb-2 text-sm dark:text-gray-400">Username</label>
+                                <input type="text" id="username" name="username" class="border p-3 dark:bg-indigo-700 dark:text-gray-300 dark:border-gray-700 shadow-md placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full" placeholder="Enter your username" required>
                             </div>
-                            
-                            <a href="{% url 'anomaly' %}">
-                                <button class="bg-gradient-to-r dark:text-gray-300 from-blue-500 to-purple-500 shadow-lg mt-4 
-                                        p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 
-                                        transition duration-300 ease-in-out" type="button">
-                                    LOG IN
-                                </button>
-                            </a>
+
+                            <!-- Password Field -->
+                            <div class="flex flex-col text-left">
+                                <label for="password" class="mb-2 text-sm dark:text-gray-400">Password</label>
+                                <input type="password" id="password" name="password" class="border p-3 dark:bg-indigo-700 dark:text-gray-300 dark:border-gray-700 shadow-md placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full" placeholder="Enter your password" required>
+                            </div>
+
+                            <button type="submit" class="bg-gradient-to-r dark:text-gray-300 from-blue-500 to-purple-500 shadow-lg mt-4 p-2 text-white rounded-lg w-full hover:scale-105 hover:from-purple-500 hover:to-blue-500 transition duration-300 ease-in-out">
+                                LOG IN
+                            </button>
                         </form>
-                        
                         <div class="text-center text-sm mt-4">
                             <p class="dark:text-gray-300">Don't have an account? 
                                 <a class="text-blue-400 hover:underline" href="{% url 'register' %}">Sign Up</a>
@@ -56,8 +40,6 @@
                 </div>
             </div>
         </div>
-      
     </div>
 </section>
-
 {% endblock %}

@@ -7,7 +7,7 @@ from ultralytics import YOLO
 import os
 import pandas
 import time
-model  = YOLO(r'anomaly/MLModels/best.pt')
+model  = YOLO(r'anomaly/MLModels/best_both.pt')
 
 
 from django.shortcuts import render

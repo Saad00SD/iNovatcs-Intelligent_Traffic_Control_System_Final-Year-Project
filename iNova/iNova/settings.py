@@ -109,6 +109,11 @@ DATABASES = {
     }
 }
 
+# Add Django's built-in authentication system
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Default
+]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
