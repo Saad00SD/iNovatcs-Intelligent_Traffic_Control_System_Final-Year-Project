@@ -1,23 +1,24 @@
 from django.shortcuts import render,redirect
-from .models import IncidentReport  # Assuming you have an IncidentReport model
+from .models import IncidentReport  
 from .forms import IncidentReportForm
 from django.http import JsonResponse
-from django.db.models import Q  # Correct import for Q
+from django.db.models import Q  
+
 
 
 def create_incident(request):
     if request.method == 'POST':
         form = IncidentReportForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the new incident report to the database
-            return redirect('incident')  # Redirect to the incident list page
+            form.save()  
+            return redirect('incident') 
         else:
-            # If the form is not valid (due to the duplicate incident_id), the error will be displayed
             return render(request, 'incidentRepo/create_incident.html', {'form': form})
     else:
         form = IncidentReportForm()
 
     return render(request, 'incidentRepo/create_incident.html', {'form': form})
+
 
 def update_incident(request, id):
     incident = IncidentReport.objects.get(id=id)
@@ -25,7 +26,7 @@ def update_incident(request, id):
         form = IncidentReportForm(request.POST, instance=incident)
         if form.is_valid():
             form.save()
-            return redirect('incident')  # Redirect to the incident list page
+            return redirect('incident')  
     else:
         form = IncidentReportForm(instance=incident)
     
@@ -35,7 +36,7 @@ def delete_incident(request, id):
     incident = IncidentReport.objects.get(id=id)
     if request.method == 'POST':
         incident.delete()
-        return redirect('incident')  # Redirect to the incident list page
+        return redirect('incident')  
     
     return render(request, 'incidentRepo/delete_incident.html', {'incident': incident})
 

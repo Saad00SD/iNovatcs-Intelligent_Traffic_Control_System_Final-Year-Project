@@ -11,35 +11,70 @@
     <style>
         /* Sidebar Styling */
         .sidebar {
-          width: 220px;
-          background-color: #2d3748;
-          color: white;
-          padding-top: 20px;
-          height: calc(100vh - 80px);
-          position: sticky;
-          top: 80px;
+            width: 220px;
+            background-color: #2d3748;
+            color: white;
+            padding-top: 20px;
+            height: calc(100vh - 80px);
+            position: sticky;
+            top: 80px;
         }
 
         .sidebar button {
-          width: 100%;
-          padding: 8px 10px;
-          text-align: left;
+            width: 100%;
+            padding: 8px 10px;
+            text-align: left;
         }
 
         .sidebar button:hover {
-          background-color: #4a5568;
+            background-color: #4a5568;
         }
 
         /* Main Content Styling */
         .content {
-          padding: 20px;
-          height: calc(100vh - 80px);
-          overflow-y: auto;
+            padding: 20px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
         }
 
         /* Light text for headings */
         h1, h2, h3, h4, h5, h6, p, label, span {
-          color: white;
+            color: white;
+        }
+
+        /* Styling for contact details */
+        .contact-details {
+            background-color: #2d3748;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .contact-details h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #38b2ac;
+        }
+
+        .contact-details p {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .contact-details button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #48bb78;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .contact-details button:hover {
+            background-color: #38a169;
         }
     </style>
 </head>
@@ -87,6 +122,34 @@
         <div class="content w-full p-6">
             {% block content %}
                 <h1 class="text-2xl font-bold text-white">Hello, Welcome to the anomaly page</h1>
+                <h1 class="text-2xl font-bold text-white">Hello, {{ user.username }}! Welcome to the Anomaly Detection page</h1>
+                <p class="text-lg text-white">Email: {{ user.email }}</p>
+                <p class="text-lg text-white">Full Name: {{ user.get_full_name }}</p>
+
+                <!-- Location Selection Form -->
+                <form method="POST" class="mb-4">
+                    {% csrf_token %}
+                    <label for="location" class="text-white">Select Location:</label>
+                    <select name="location" id="location" class="bg-gray-800 text-white p-2 rounded">
+                        {% for location in locations %}
+                            <option value="{{ location.id }}" {% if location.id == location_details.id %}selected{% endif %}>{{ location.location }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-1 rounded text-sm">Fetch Contact Details</button>
+                </form>
+
+                <!-- Display selected location details -->
+                {% if location_details %}
+                    <div class="contact-details">
+                        <h3 class="text-xl font-semibold text-white">Emergency Contacts for {{ location_details.location }}:</h3>
+                        <p class="text-white">Police: {{ location_details.police_contact }}</p>
+                        <p class="text-white">Hospital: {{ location_details.hospital_contact }}</p>
+                        <p class="text-white">Fire Department: {{ location_details.fire_contact }}</p>
+                        <button onclick="window.location.href='tel:{{ location_details.police_contact }}'" class="text-white">Call Police</button>
+                        <button onclick="window.location.href='tel:{{ location_details.hospital_contact }}'" class="text-white">Call Hospital</button>
+                        <button onclick="window.location.href='tel:{{ location_details.fire_contact }}'" class="text-white">Call Fire Department</button>
+                    </div>
+                {% endif %}
             {% endblock %}
         </div>
     </div>

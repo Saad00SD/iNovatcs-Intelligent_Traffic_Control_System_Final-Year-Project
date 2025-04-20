@@ -1,0 +1,22 @@
+/* Ensure body and html have 100% height */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Prevent the content area from overflowing */
+.content {
+    overflow-y: auto;
+    max-height: 90vh;  /* Adjust to ensure that the page content doesn't overflow */
+}
+
+/* Prevent additional overflow for video section */
+video, img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Ensure the body content doesn't cause the page to scroll unnecessarily */
+body {
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}

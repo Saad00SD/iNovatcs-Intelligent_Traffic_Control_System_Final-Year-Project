@@ -1,11 +1,10 @@
-from django.urls import path
 from . import views
 from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 
 
@@ -24,4 +23,11 @@ urlpatterns = [
     path('video_feed_uploaded/footage_4/', views.video_feed_uploaded, {'footage_type': 'fire'}, name='video_feed_footage_4'),
 
     path("detection/", views.alert_update, name="detection"),
+
+    path('fetch_authorities/', views.fetch_authorities, name='fetch_authorities'),
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+    path('create_incident_report/', views.create_incident_report, name='create_incident_report'),
+
+
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
