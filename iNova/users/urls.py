@@ -9,6 +9,8 @@ urlpatterns = [
     path('register/', user_views.register, name='register'),
     path('login/', user_views.user_login, name='login'),
     path('logout/', user_views.user_logout, name='logout'),
+    path('login/', user_views.user_login, name='login'),
+
 
     # Protected Pages (only accessible by logged-in users)
     path('home/', user_views.user_home, name='home'),  # Redirect to home or dashboard after login
