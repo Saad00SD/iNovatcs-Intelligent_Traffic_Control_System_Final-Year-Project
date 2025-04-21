@@ -126,14 +126,24 @@ def foot_1(request):
         'uploaded_video_url': uploaded_video_url,
         'locations': locations,  # Pass all locations to the template
         'location_details': location_details,  # Pass the selected location details to the template
-    })
+})
     
 def foot_2(request):
     global uploaded_video_path
     result_message = None
     uploaded_video_url = None
 
+    # Fetch all locations from TrafficData
+    locations = TrafficData.objects.all()
+    location_details = None
+
     if request.method == 'POST':
+        # Handle location selection and video upload
+        location_id = request.POST.get('location')
+        if location_id:
+            location_details = TrafficData.objects.get(id=location_id)
+
+        # Handle video upload
         form = VideoUploadForm(request.POST, request.FILES)
         if form.is_valid():
             video = form.cleaned_data['video_file']
@@ -150,28 +160,39 @@ def foot_2(request):
             result_message = "✅ Video uploaded! Scroll to see detection stream."
     else:
         form = VideoUploadForm()
-    
-    message = ""
 
+    message = ""
     if is_smoke:
         message += 'Smoke Detected'
-    
     if is_fire:
         message += ' Fire Detected'
 
     return render(request, 'Anomaly_pages/footage_2.html', {
         'form': form,
         'result_message': result_message,
-        'uploaded_video_url': uploaded_video_url
+        'uploaded_video_url': uploaded_video_url,
+        'locations': locations,
+        'location_details': location_details,
+        'message': message,
     })
-
 
 def foot_3(request):
     global uploaded_video_path
     result_message = None
     uploaded_video_url = None
 
+    # Fetch all locations from TrafficData
+    locations = TrafficData.objects.all()
+
+    location_details = None
+
     if request.method == 'POST':
+        # Handle location selection
+        location_id = request.POST.get('location')
+        if location_id:
+            location_details = TrafficData.objects.get(id=location_id)
+
+        # Handle video upload
         form = VideoUploadForm(request.POST, request.FILES)
         if form.is_valid():
             video = form.cleaned_data['video_file']
@@ -186,21 +207,16 @@ def foot_3(request):
             uploaded_video_path = upload_path
             uploaded_video_url = settings.MEDIA_URL + 'uploads/' + filename
             result_message = "✅ Video uploaded! Scroll to see detection stream."
+
     else:
         form = VideoUploadForm()
-    
-    message = ""
 
-    if is_smoke:
-        message += 'Smoke Detected'
-    
-    if is_fire:
-        message += ' Fire Detected'
-
-    return render(request, 'Anomaly_pages/footage_3.html', {
+    return render(request, 'Anomaly_pages/footage_1.html', {
         'form': form,
         'result_message': result_message,
-        'uploaded_video_url': uploaded_video_url
+        'uploaded_video_url': uploaded_video_url,
+        'locations': locations,  # Pass all locations to the template
+        'location_details': location_details,  # Pass the selected location details to the template
     })
 
 def foot_4(request):
@@ -208,7 +224,18 @@ def foot_4(request):
     result_message = None
     uploaded_video_url = None
 
+    # Fetch all locations from TrafficData
+    locations = TrafficData.objects.all()
+
+    location_details = None
+
     if request.method == 'POST':
+        # Handle location selection
+        location_id = request.POST.get('location')
+        if location_id:
+            location_details = TrafficData.objects.get(id=location_id)
+
+        # Handle video upload
         form = VideoUploadForm(request.POST, request.FILES)
         if form.is_valid():
             video = form.cleaned_data['video_file']
@@ -223,15 +250,17 @@ def foot_4(request):
             uploaded_video_path = upload_path
             uploaded_video_url = settings.MEDIA_URL + 'uploads/' + filename
             result_message = "✅ Video uploaded! Scroll to see detection stream."
+
     else:
         form = VideoUploadForm()
 
-    return render(request, 'Anomaly_pages/footage_4.html', {
+    return render(request, 'Anomaly_pages/footage_1.html', {
         'form': form,
         'result_message': result_message,
-        'uploaded_video_url': uploaded_video_url
+        'uploaded_video_url': uploaded_video_url,
+        'locations': locations,  # Pass all locations to the template
+        'location_details': location_details,  # Pass the selected location details to the template
     })
-
 
 
 def gen_frames_from_uploaded(footage_type):
@@ -299,18 +328,37 @@ def detect():
 def alert_update(request):
     return StreamingHttpResponse(detect(), content_type='text/event-stream')
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import TrafficData
+from .forms import LocationForm  # Create a form to handle new location data
+
 @login_required
 def anomaly(request):
     # Fetch all locations from TrafficData
     locations = TrafficData.objects.all()
-
     location_details = None
-    # Handle POST request
+
+    # Handle adding new location
     if request.method == 'POST':
-        # Get the selected location ID from the form
         location_id = request.POST.get('location')
-        if location_id:
-            # Retrieve the location details
+        # Check if it's adding a new location
+        if 'add_location' in request.POST:
+            location_name = request.POST.get('new_location')
+            police_contact = request.POST.get('police_contact')
+            hospital_contact = request.POST.get('hospital_contact')
+            fire_contact = request.POST.get('fire_contact')
+            
+            # Add the new location to the database
+            new_location = TrafficData.objects.create(
+                location=location_name,
+                police_contact=police_contact,
+                hospital_contact=hospital_contact,
+                fire_contact=fire_contact
+            )
+            locations = TrafficData.objects.all()  # Refresh locations list
+            location_details = new_location  # Show details for the newly added location
+        elif location_id:
             location_details = TrafficData.objects.get(id=location_id)
 
     # Send the selected location details and list of locations to the template
@@ -318,6 +366,7 @@ def anomaly(request):
         'locations': locations,
         'location_details': location_details
     })
+
 def fetch_authorities(request):
     if request.method == 'POST':
         location_id = request.POST.get('location')
@@ -334,6 +383,36 @@ def fetch_authorities(request):
             'hospital_contact': hospital_contact,
             'fire_contact': fire_contact,
         })
+    
+
+from django.http import JsonResponse
+from .forms import LocationForm
+from .models import TrafficData
+
+@login_required
+@login_required
+def add_location(request):
+    if request.method == 'POST':
+        form = LocationForm(request.POST)
+        if form.is_valid():
+            # Save the new location to the database
+            new_location = form.save()
+
+            # Return a success response with the new location data and a success message
+            return JsonResponse({
+                'success': True, 
+                'message': 'Location added successfully!',  # Add a success message
+                'location': {
+                    'id': new_location.id,
+                    'location': new_location.location,
+                }
+            })
+        else:
+            # If form is invalid, return errors
+            return JsonResponse({'success': False, 'errors': form.errors})
+
+    return JsonResponse({'success': False, 'message': 'Invalid method'})
+
 
 from django.http import JsonResponse
 from .forms import IncidentReportForm
@@ -359,9 +438,7 @@ def create_incident_report(request):
                 }
             })
         else:
-            # Return error response if form is invalid
             return JsonResponse({'success': False, 'message': 'Error in form submission!', 'errors': form.errors})
 
-    # If the method is not POST, return error
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 

@@ -50,7 +50,8 @@ def reports(request):
 def incident(request):
     search_query = request.GET.get('search', '')  # Get search query from the URL
 
-    # Filter incidents by Incident ID or Location if there's a search query
+    # Filter incidents by Incident ID or Location if there'
+    # s a search query
     incident_reports = IncidentReport.objects.all()
 
     if search_query:

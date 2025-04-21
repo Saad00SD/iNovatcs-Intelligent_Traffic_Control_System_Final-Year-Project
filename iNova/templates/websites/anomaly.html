@@ -20,16 +20,6 @@
             top: 80px;
         }
 
-        .sidebar button {
-            width: 100%;
-            padding: 8px 10px;
-            text-align: left;
-        }
-
-        .sidebar button:hover {
-            background-color: #4a5568;
-        }
-
         /* Main Content Styling */
         .content {
             padding: 20px;
@@ -37,12 +27,6 @@
             overflow-y: auto;
         }
 
-        /* Light text for headings */
-        h1, h2, h3, h4, h5, h6, p, label, span {
-            color: white;
-        }
-
-        /* Styling for contact details */
         .contact-details {
             background-color: #2d3748;
             padding: 20px;
@@ -50,31 +34,24 @@
             margin-top: 20px;
         }
 
-        .contact-details h3 {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            color: #38b2ac;
+        /* Modal Styling */
+        #addLocationModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
-
-        .contact-details p {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            color: white;
-        }
-
-        .contact-details button {
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #48bb78;
-            color: white;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .contact-details button:hover {
-            background-color: #38a169;
+        #modalContent {
+            background-color: #1a202c;
+            padding: 20px;
+            border-radius: 10px;
+            width: 50%;
         }
     </style>
 </head>
@@ -121,39 +98,143 @@
         <!-- Main Content Section -->
         <div class="content w-full p-6">
             {% block content %}
-                <h1 class="text-2xl font-bold text-white">Hello, Welcome to the anomaly page</h1>
-                <h1 class="text-2xl font-bold text-white">Hello, {{ user.username }}! Welcome to the Anomaly Detection page</h1>
-                <p class="text-lg text-white">Email: {{ user.email }}</p>
-                <p class="text-lg text-white">Full Name: {{ user.get_full_name }}</p>
+            <h1 class="text-2xl font-bold text-white">Hello, {{ user.username|capfirst }}! Welcome to the Anomaly Detection page</h1>
 
-                <!-- Location Selection Form -->
-                <form method="POST" class="mb-4">
-                    {% csrf_token %}
-                    <label for="location" class="text-white">Select Location:</label>
-                    <select name="location" id="location" class="bg-gray-800 text-white p-2 rounded">
-                        {% for location in locations %}
-                            <option value="{{ location.id }}" {% if location.id == location_details.id %}selected{% endif %}>{{ location.location }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" class="bg-green-600 text-white px-4 py-1 rounded text-sm">Fetch Contact Details</button>
-                </form>
+            <!-- User Details Section -->
+            <div class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+                <p class="text-xl font-semibold text-teal-400 mb-2">Logged User Details:</p>
+                <div class="text-lg text-white">
+                    <p><span class="font-bold text-teal-300">Full Name:</span> {{ user.get_full_name }}</p>
+                    <p><span class="font-bold text-teal-300">Email:</span> {{ user.email }}</p>
+                </div>
+            </div>
 
-                <!-- Display selected location details -->
-                {% if location_details %}
-                    <div class="contact-details">
-                        <h3 class="text-xl font-semibold text-white">Emergency Contacts for {{ location_details.location }}:</h3>
-                        <p class="text-white">Police: {{ location_details.police_contact }}</p>
-                        <p class="text-white">Hospital: {{ location_details.hospital_contact }}</p>
-                        <p class="text-white">Fire Department: {{ location_details.fire_contact }}</p>
-                        <button onclick="window.location.href='tel:{{ location_details.police_contact }}'" class="text-white">Call Police</button>
-                        <button onclick="window.location.href='tel:{{ location_details.hospital_contact }}'" class="text-white">Call Hospital</button>
-                        <button onclick="window.location.href='tel:{{ location_details.fire_contact }}'" class="text-white">Call Fire Department</button>
+            <!-- Location Selection Form -->
+            <form method="POST" class="mb-4">
+                {% csrf_token %}
+                <label for="location" class="text-white">Select Location:</label>
+                <select name="location" id="location" class="bg-gray-800 text-white p-2 rounded">
+                    {% for location in locations %}
+                        <option value="{{ location.id }}" {% if location.id == location_details.id %}selected{% endif %}>{{ location.location }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded text-sm">Show Location Details</button>
+            </form>
+
+            <!-- Display selected location details -->
+            {% if location_details %}
+                <div class="contact-details">
+                    <h3 class="text-xl font-semibold text-white">Emergency Contacts for {{ location_details.location }}:</h3>
+                    <p class="text-white">Police: {{ location_details.police_contact }}</p>
+                    <p class="text-white">Hospital: {{ location_details.hospital_contact }}</p>
+                    <p class="text-white">Fire Department: {{ location_details.fire_contact }}</p>
+                    <button onclick="window.location.href='tel:{{ location_details.police_contact }}'" class="bg-blue-600 text-white px-4 py-2 rounded mt-4">Call Police</button>
+                    <button onclick="window.location.href='tel:{{ location_details.hospital_contact }}'" class="bg-yellow-600 text-white px-4 py-2 rounded mt-2">Call Hospital</button>
+                    <button onclick="window.location.href='tel:{{ location_details.fire_contact }}'" class="bg-red-600 text-white px-4 py-2 rounded mt-2">Call Fire Department</button>              
                     </div>
-                {% endif %}
+            {% endif %}
+
+            <!-- Button to Trigger Modal -->
+            <button id="addLocationBtn" class="bg-green-600 text-white px-6 py-2 rounded mt-6">Add New Location</button>
+
             {% endblock %}
         </div>
     </div>
 
+    <!-- Modal for Adding New Location -->
+    <div id="addLocationModal" class="flex">
+        <div id="modalContent" class="bg-gray-800 text-white p-6 rounded-lg">
+            <h3 class="text-xl font-semibold">Add New Location</h3>
+            <form id="locationForm" method="POST">
+                {% csrf_token %}
+                <div>
+                    <label for="location" class="text-white">Location Name:</label>
+                    <input type="text" id="location" name="location" class="bg-gray-800 text-white p-2 rounded w-full" required>
+                </div>
+                <div class="mt-4">
+                    <label for="police_contact" class="text-white">Police Contact:</label>
+                    <input type="text" id="police_contact" name="police_contact" class="bg-gray-800 text-white p-2 rounded w-full" required>
+                </div>
+                <div class="mt-4">
+                    <label for="hospital_contact" class="text-white">Hospital Contact:</label>
+                    <input type="text" id="hospital_contact" name="hospital_contact" class="bg-gray-800 text-white p-2 rounded w-full" required>
+                </div>
+                <div class="mt-4">
+                    <label for="fire_contact" class="text-white">Fire Contact:</label>
+                    <input type="text" id="fire_contact" name="fire_contact" class="bg-gray-800 text-white p-2 rounded w-full" required>
+                </div>
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded mt-4">Add Location</button>
+            </form>
+            
+            <button id="closeModalBtn" class="bg-red-600 text-white px-6 py-2 rounded mt-4">Close</button>
+        </div>
+    </div>
+
     {% include 'partials/footer.html' %}
+
+    <!-- Success Message Div (Initially Hidden) -->
+    <div id="successMessage" class="hidden bg-green-500 text-white p-4 mb-4 rounded">
+        Location added successfully!
+    </div>
+
+
+    <script>
+        // Open the modal when the "Add New Location" button is clicked
+        document.getElementById('addLocationBtn').addEventListener('click', function() {
+            document.getElementById('addLocationModal').style.display = 'flex';
+        });
+    
+        // Close the modal when the "Close" button is clicked
+        document.getElementById('closeModalBtn').addEventListener('click', function() {
+            document.getElementById('addLocationModal').style.display = 'none';
+        });
+    
+        // Handle the form submission using AJAX to add a new location
+        document.getElementById('locationForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the default form submission
+    
+            // Collect form data
+            const formData = new FormData(this);
+    
+            // Log the form data to see if 'location' is included
+            for (const [key, value] of formData.entries()) {
+                console.log(key, value);  // Check if location is included
+            }
+    
+            // Send the data to the server using AJAX
+            fetch("{% url 'add_location' %}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show the success message div
+                    const successMessageDiv = document.getElementById('successMessage');
+                    if (successMessageDiv) {
+                        successMessageDiv.textContent = data.message;  // Set the success message text
+                        successMessageDiv.classList.remove('hidden');  // Make it visible
+                    }
+    
+                    // Add the new location to the dropdown and close the modal
+                    const locationSelect = document.getElementById('location');
+                    const newOption = document.createElement('option');
+                    newOption.value = data.location.id;
+                    newOption.text = data.location.location;
+                    locationSelect.appendChild(newOption);
+    
+                    // Close the modal
+                    document.getElementById('addLocationModal').style.display = 'none';
+                } else {
+                    alert('Error adding location: ' + JSON.stringify(data.errors));
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        });
+    </script>
+    
+    
 </body>
 </html>

@@ -1,12 +1,9 @@
 from django import forms
+from reports.models import IncidentReport
+from .models import TrafficData
 
 class VideoUploadForm(forms.Form):
     video_file = forms.FileField()
-
-from reports.models import IncidentReport
-
-from django import forms
-from reports.models import IncidentReport
 
 class IncidentReportForm(forms.ModelForm):
     class Meta:
@@ -22,3 +19,17 @@ class IncidentReportForm(forms.ModelForm):
             raise forms.ValidationError("This Incident ID already exists. Please enter a unique ID.")
 
         return incident_id
+    
+from django import forms
+from .models import TrafficData
+
+class LocationForm(forms.ModelForm):
+    class Meta:
+        model = TrafficData
+        fields = ['location', 'police_contact', 'hospital_contact', 'fire_contact']
+        widgets = {
+            'location': forms.TextInput(attrs={'class': 'bg-gray-800 text-white p-2 rounded'}),
+            'police_contact': forms.TextInput(attrs={'class': 'bg-gray-800 text-white p-2 rounded'}),
+            'hospital_contact': forms.TextInput(attrs={'class': 'bg-gray-800 text-white p-2 rounded'}),
+            'fire_contact': forms.TextInput(attrs={'class': 'bg-gray-800 text-white p-2 rounded'}),
+        }

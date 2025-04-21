@@ -27,6 +27,8 @@ urlpatterns = [
     path('fetch_authorities/', views.fetch_authorities, name='fetch_authorities'),
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('create_incident_report/', views.create_incident_report, name='create_incident_report'),
+    path('add_location/', views.add_location, name='add_location'),  # add_location URL pattern
+
 
 
 
