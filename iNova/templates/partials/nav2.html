@@ -9,7 +9,7 @@
     <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
       <!-- Display the logged-in username and a logout button -->
       <p class="mr-2">Hello, </p> <!-- Optional: Added margin-right for space between "Hello" and username -->
-      <span class="text-sm text-gray-900 dark:text-white">{{ request.user.username }}</span> <!-- Display logged-in username -->
+      <span class="text-sm text-gray-900 dark:text-white">{{ request.user.username| capfirst }}</span> <!-- Display logged-in username -->
       <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white ml-4">Sign out</a> <!-- Link to logout with margin-left -->
     </div>
     <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">

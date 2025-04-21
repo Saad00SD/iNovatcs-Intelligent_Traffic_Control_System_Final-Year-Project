@@ -1,16 +1,48 @@
 {% extends 'websites/traffic.html' %}
+
 {% block content %}
+    <h2 class="text-2xl font-bold mb-6">Footage 1: Traffic Page</h2>
+    
+    <h1>Upload and Play Videos</h1>
+    
+    <!-- Video Upload Form -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Upload Videos</button>
+    </form>
 
-<h2 class="text-2xl font-bold mb-4">Upload Traffic Videos</h2>
-
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% for i in "1234" %}
-        <label>Video {{ i }}:</label>
-        <input type="file" name="video{{ i }}" accept="video/*" required><br><br>
-    {% endfor %}
-    <button type="submit">Upload & Analyze</button>
-</form>
-
-
+    <!-- Display Videos -->
+    {% if video_urls %}
+        <div class="grid grid-cols-2 gap-4 mt-6">
+            <div>
+                <h3>Video 1</h3>
+                <video width="50%" controls>
+                    <source src="{{ video_urls.0 }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div>
+                <h3>Video 2</h3>
+                <video width="50%" controls>
+                    <source src="{{ video_urls.1 }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div>
+                <h3>Video 3</h3>
+                <video width="50%" controls>
+                    <source src="{{ video_urls.2 }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div>
+                <h3>Video 4</h3>
+                <video width="50%" controls>
+                    <source src="{{ video_urls.3 }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
