@@ -1,5 +1,7 @@
 from django import forms
 from .models import IncidentReport
+from .models import TrafficSignal
+
 
 class IncidentReportForm(forms.ModelForm):
     class Meta:
@@ -15,3 +17,12 @@ class IncidentReportForm(forms.ModelForm):
             raise forms.ValidationError("This Incident ID already exists. Please enter a unique ID.")
 
         return incident_id
+
+class TrafficSignalForm(forms.ModelForm):
+    class Meta:
+        model = TrafficSignal
+        fields = ['location', 'signal_state', 'signal_timer', 
+                  'lane_1_vehicle_count', 'lane_2_vehicle_count', 
+                  'lane_3_vehicle_count', 'lane_4_vehicle_count', 
+                ]
+

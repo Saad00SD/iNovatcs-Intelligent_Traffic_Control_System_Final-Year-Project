@@ -1,48 +1,119 @@
-{% extends 'websites/traffic.html' %}
+{% extends 'websites/traffic.html' %} {% load static %} {% block content %}
 
-{% block content %}
-    <h2 class="text-2xl font-bold mb-6">Footage 1: Traffic Page</h2>
-    
-    <h1>Upload and Play Videos</h1>
-    
-    <!-- Video Upload Form -->
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded">Upload Videos</button>
-    </form>
+<style>
+  /* Set background image for div using static tag in Django */
+  .body {
+    width: 100%;
+    height: 100%;
+    background-image: url("{% static 'images/junction.png' %}"); /* Reference the image from static directory */
+    background-size: cover; /* Make the background cover the div */
+    background-position: center; /* Center the image within the div */
+    background-repeat: no-repeat; /* Prevent image repetition */
+  }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    <!-- Display Videos -->
-    {% if video_urls %}
-        <div class="grid grid-cols-2 gap-4 mt-6">
-            <div>
-                <h3>Video 1</h3>
-                <video width="50%" controls>
-                    <source src="{{ video_urls.0 }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div>
-                <h3>Video 2</h3>
-                <video width="50%" controls>
-                    <source src="{{ video_urls.1 }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div>
-                <h3>Video 3</h3>
-                <video width="50%" controls>
-                    <source src="{{ video_urls.2 }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            <div>
-                <h3>Video 4</h3>
-                <video width="50%" controls>
-                    <source src="{{ video_urls.3 }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        </div>
-    {% endif %}
+  /* Container for the traffic light */
+  .traffic-light-container {
+    position: absolute;
+    width: 25px;
+    height: 100px;
+    background-color: #333;
+    border-radius: 10px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Traffic light colors */
+  .light {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #555;
+    transition: background-color 0.5s;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  /* Apply animation to the traffic lights */
+  .traffic-light-container .light {
+    animation: cycleLights 6s infinite;
+  }
+
+  /* Specific colors */
+  .light.red {
+    background-color: red;
+  }
+  .light.yellow {
+    background-color: yellow;
+  }
+  .light.green {
+    background-color: green;
+  }
+
+  /* Optional: Light off effect */
+  .light.off {
+    background-color: #555;
+  }
+
+  #tl2,
+  #tl4 {
+    transform: rotate(90deg);
+  }
+
+  #tl1 {
+    left: 715px;
+    top: 310px;
+  }
+
+  #tl2 {
+    left: 890px;
+    top: 230px;
+  }
+
+  #tl3 {
+    left: 965px;
+    top: 405px;
+  }
+
+  #tl4 {
+    left: 790px;
+    top: 485px;
+  }
+</style>
+
+<div class="body">
+  <div class="traffic-light-container" id="tl1">
+    <div class="light red" id="tl1r"></div>
+    <div class="light yellow" id="tl1y"></div>
+    <div class="light green" id="tl1g">↑</div>
+  </div>
+
+  <div class="traffic-light-container" id="tl2">
+    <div class="light red" id="tl2r"></div>
+    <div class="light yellow" id="tl2y"></div>
+    <div class="light green" id="tl2g">↑</div>
+  </div>
+
+  <div class="traffic-light-container" id="tl3">
+    <div class="light red" id="tl3r"></div>
+    <div class="light yellow" id="tl3y"></div>
+    <div class="light green" id="tl3g">↑</div>
+  </div>
+
+  <div class="traffic-light-container" id="tl4">
+    <div class="light red" id="tl4r"></div>
+    <div class="light yellow" id="tl4y"></div>
+    <div class="light green" id="tl4g">↑</div>
+  </div>
+</div>
+
 {% endblock %}
+
+<!-- JavaScript for handling image upload, selection, and counting -->

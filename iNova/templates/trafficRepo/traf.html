@@ -1,28 +1,128 @@
-{% extends "base.html" %}
-{% load static tailwind_tags %}
-{% load static %}
-
-{% block title %}  {% endblock %}
-
-{% block content %}
-    <!-- <p>Traffic Page</p> -->
-    <div class="container mt-4">
-        <div class = "row">
-            <div class="col-md-7">
-                <nav aria-label = "breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class = "breadcrumb-item"><a href="#">Traffic Reports</a></li>
-                        <li class = "breadcrumb-item activate" aria-current = "page">Add New</li>
-                    </ol>
-                </nav>
-            </div>
-            <div class="col-md-2">
-
-                <a href="" class="btn btn-primary">Add New</a>
-            </div>
-        </div>
+{% extends "base.html" %} {% load static tailwind_tags %} {% block title %}
+Traffic Reports {% endblock %} {% block content %}
+<!-- Traffic Reports Section -->
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-7">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Traffic Reports</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            All Reports
+          </li>
+        </ol>
+      </nav>
     </div>
+    <div class="col-md-2">
+      <a href="{% url 'add_traffic_signal' %}" class="btn btn-primary"
+        >Add New</a
+      >
+    </div>
+  </div>
+</div>
 
+<!-- Search Bar -->
+<div class="container mt-4">
+  <form method="get" action="{% url 'traf' %}">
+    <input
+      type="text"
+      name="search"
+      value="{{ search_query }}"
+      class="border rounded-lg px-4 py-2 w-full"
+      placeholder="Search by Location or Signal State"
+    />
+    <button
+      type="submit"
+      class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-2"
+    >
+      Search
+    </button>
+  </form>
+</div>
 
-    
+<!-- Table to Display Traffic Signal Reports -->
+<div class="container mt-6">
+  <table
+    class="table-auto w-full border-collapse border border-gray-300 text-sm"
+  >
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Location</th>
+        <th class="border px-4 py-2">Signal State</th>
+        <th class="border px-4 py-2">Signal Timer</th>
+        <th class="border px-4 py-2">Lane 1 Count</th>
+        <th class="border px-4 py-2">Lane 2 Count</th>
+        <th class="border px-4 py-2">Lane 3 Count</th>
+        <th class="border px-4 py-2">Lane 4 Count</th>
+        <th class="border px-4 py-2">Timestamp</th>
+        <th class="border px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for signal in traffic_signals %}
+      <tr>
+        <td class="border px-4 py-2">{{ signal.location }}</td>
+        <td class="border px-4 py-2">{{ signal.signal_state }}</td>
+        <td class="border px-4 py-2">{{ signal.signal_timer }}</td>
+        <td class="border px-4 py-2">{{ signal.lane_1_vehicle_count }}</td>
+        <td class="border px-4 py-2">{{ signal.lane_2_vehicle_count }}</td>
+        <td class="border px-4 py-2">{{ signal.lane_3_vehicle_count }}</td>
+        <td class="border px-4 py-2">{{ signal.lane_4_vehicle_count }}</td>
+        <td class="border px-4 py-2">{{ signal.timestamp }}</td>
+        <td class="border px-4 py-2">
+          <a
+            href="{% url 'update_traffic_signal' signal.id %}"
+            class="text-blue-600 hover:text-blue-800"
+            >Edit</a
+          >
+          |
+          <a
+            href="{% url 'delete_traffic_signal' signal.id %}"
+            class="text-red-600 hover:text-red-800"
+            >Delete</a
+          >
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="9" class="text-center">No traffic reports found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination Controls -->
+  <div class="mt-4">
+    <div class="flex justify-between items-center">
+      <div>
+        <span
+          >Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages
+          }}</span
+        >
+      </div>
+      <div class="flex space-x-4">
+        {% if page_obj.has_previous %}
+        <a href="?page=1" class="px-4 py-2 border rounded-lg">First</a>
+        <a
+          href="?page={{ page_obj.previous_page_number }}"
+          class="px-4 py-2 border rounded-lg"
+          >Previous</a
+        >
+        {% endif %} {% if page_obj.has_next %}
+        <a
+          href="?page={{ page_obj.next_page_number }}"
+          class="px-4 py-2 border rounded-lg"
+          >Next</a
+        >
+        <a
+          href="?page={{ page_obj.paginator.num_pages }}"
+          class="px-4 py-2 border rounded-lg"
+          >Last</a
+        >
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

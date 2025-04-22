@@ -5,7 +5,6 @@ from .yolo_fire import run_fire_detection
 from ultralytics import YOLO
 from django.shortcuts import render
 from django.http import StreamingHttpResponse
-from django.conf import settings
 from .forms import VideoUploadForm
 import os, uuid, cv2
 from django.contrib.auth.decorators import login_required
@@ -14,15 +13,10 @@ from .forms import IncidentReportForm
 from django.http import JsonResponse
 
 
-
-
-
-
 uploaded_video_path = None  # global var for streaming
 is_fire  = False
 is_smoke = False
 is_accident = False
-
 
 
 model  = YOLO(r'anomaly/MLModels/best.pt')
@@ -44,8 +38,6 @@ def foot_4(request):
 
 def anomaly(request):
     return render(request, 'websites/anomaly.html')
-
-
 
 
 
@@ -78,12 +70,7 @@ def process_video(request, footage_type):
         'uploaded_video_url': uploaded_video_url
     })
 
-from django.shortcuts import render
-from .models import TrafficData
-from .forms import VideoUploadForm
-import uuid
-import os
-from django.conf import settings
+
 
 def foot_1(request):
     global uploaded_video_path
@@ -367,29 +354,81 @@ def anomaly(request):
         'location_details': location_details
     })
 
+# def fetch_authorities(request):
+#     if request.method == 'POST':
+#         location_id = request.POST.get('location')
+#         location = TrafficData.objects.get(id=location_id)
+
+#         # Get the contact details
+#         police_contact = location.police_contact
+#         hospital_contact = location.hospital_contact
+#         fire_contact = location.fire_contact
+
+#         # Pass the contact details to the footage_1 page
+#         return render(request, 'Anomaly_pages/footage_1.html', {
+#             'police_contact': police_contact,
+#             'hospital_contact': hospital_contact,
+#             'fire_contact': fire_contact,
+#         })
+
+from .twilio_config import send_sms
+from django.http import JsonResponse
+import json
+
 def fetch_authorities(request):
     if request.method == 'POST':
-        location_id = request.POST.get('location')
-        location = TrafficData.objects.get(id=location_id)
+        try:
+            body = json.loads(request.body)
+            print("Request Body:", body)  # Debugging: Check the data being sent
 
-        # Get the contact details
-        police_contact = location.police_contact
-        hospital_contact = location.hospital_contact
-        fire_contact = location.fire_contact
+            # Get the location_id and type from the request body
+            location_id = body.get('location')  # Fetching location from the body
+            alert_type = body.get('type')
 
-        # Pass the contact details to the footage_1 page
-        return render(request, 'Anomaly_pages/footage_1.html', {
-            'police_contact': police_contact,
-            'hospital_contact': hospital_contact,
-            'fire_contact': fire_contact,
-        })
+            if location_id is None:
+                return JsonResponse({'success': False, 'message': 'Location ID is missing.'}, status=400)
+
+            print("Location ID:", location_id)  # Debugging: Check the location ID
+
+            # Fetch the TrafficData instance based on location_id
+            location = TrafficData.objects.get(id=location_id)
+
+            # Get the contact details
+            police_contact = location.police_contact
+            hospital_contact = location.hospital_contact
+            fire_contact = location.fire_contact
+
+            message = ""
+
+            print("phone number:", hospital_contact)
+
+            if alert_type == 'police':
+                message = f"Alert: Police notified for location {location.location}."
+                send_sms(police_contact, message)
+            elif alert_type == 'hospital':
+                message = f"Alert: Hospital notified for location {location.location}."
+                send_sms(hospital_contact, message)  
+                # send_sms("03171644991", message)  
+
+            elif alert_type == 'fire':
+                message = f"Alert: Fire Department notified for location {location.location}."
+                send_sms(fire_contact, message)
+
+            return JsonResponse({'success': True, 'message': 'Alert sent successfully.'})
+
+        except TrafficData.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Location not found.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Error: {str(e)}'}, status=400)
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
+
     
 
 from django.http import JsonResponse
 from .forms import LocationForm
 from .models import TrafficData
 
-@login_required
 @login_required
 def add_location(request):
     if request.method == 'POST':

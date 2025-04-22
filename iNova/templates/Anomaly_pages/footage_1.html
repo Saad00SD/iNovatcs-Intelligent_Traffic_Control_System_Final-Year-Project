@@ -69,9 +69,10 @@
                 <p class="text-white">Fire Department: {{ location_details.fire_contact }}</p>
 
                 <!-- Call Buttons for Contacts -->
-                <button onclick="window.location.href='tel:{{ location_details.police_contact }}'" class="bg-blue-600 text-white px-4 py-2 rounded mt-4">Call Police</button>
-                <button onclick="window.location.href='tel:{{ location_details.hospital_contact }}'" class="bg-yellow-600 text-white px-4 py-2 rounded mt-2">Call Hospital</button>
-                <button onclick="window.location.href='tel:{{ location_details.fire_contact }}'" class="bg-red-600 text-white px-4 py-2 rounded mt-2">Call Fire Department</button>
+                <button onclick="callEmergency('police', {{ location_details.id }})" class="bg-blue-600 text-white px-4 py-2 rounded mt-4">Call Police</button>
+                <button onclick="callEmergency('hospital', {{ location_details.id }})" class="bg-yellow-600 text-white px-4 py-2 rounded mt-2">Call Hospital</button>
+                <button onclick="callEmergency('fire', {{ location_details.id }})" class="bg-red-600 text-white px-4 py-2 rounded mt-2">Call Fire Department</button>
+
             </div>
         </div>
 
@@ -80,10 +81,31 @@
             <p class="mb-4">Click Here to add New incident report</p>
             <button id="addIncidentBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg">+Add Incident</button>
         </div>
-        
     </div>
 {% endif %}
 {% endif %}
+
+<script>
+    // Send the alert to the server when any of the buttons are clicked
+    function callEmergency(type, locationId) {
+    fetch("{% url 'fetch_authorities' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()  // Add CSRF token here
+        },
+        body: JSON.stringify({ type: type, location: locationId })  // Send both 'type' and 'location_id'
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Emergency notification sent!');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
+
 
 <!-- Modal for Incident Report -->
 <div id="incidentModal" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center hidden">
@@ -166,7 +188,46 @@
             console.log(error);  // Log the error for debugging
         });
     });
+
+
+    // Function to get the CSRF token from the cookie
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Send the alert to the server when any of the buttons are clicked
+    function callEmergency(type, locationId) {
+    fetch("{% url 'fetch_authorities' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()  // Add CSRF token here
+        },
+        body: JSON.stringify({ type: type, location: locationId })  // Send both 'type' and 'location_id'
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Emergency notification sent!');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 </script>
+
+
 
 
 {% endblock %}

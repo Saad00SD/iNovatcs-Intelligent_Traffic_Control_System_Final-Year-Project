@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% load static tailwind_tags %} {% load static %}
+{%block title %} Add New Traffic {% endblock %} {% block content %}
+<h2>Add New Traffic Signal</h2>
+
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Add Signal</button>
+</form>
+
+{% endblock %}
