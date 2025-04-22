@@ -1,14 +1,28 @@
-{% extends "base.html" %} {% load static tailwind_tags %} {% load static %} {%
-block title %} {% endblock %} {% block content %}
-<h1>Welcome to Reports Page</h1>
-<p>
-  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Reiciendis
-  reprehenderit ducimus odio nulla est omnis eveniet enim earum nisi laudantium
-  rem accusamus, quaerat temporibus porro nemo ut, culpa ab assumenda!
-</p>
-<p>
-  Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa totam commodi
-  aperiam similique quisquam animi blanditiis doloremque! Saepe fugit animi
-  neque illo perspiciatis optio quisquam amet, dolores corporis quas ex?
-</p>
+{% extends "base.html" %}
+{% load static tailwind_tags %}
+{% load static %}
+
+{% block title %} Reports Landing Page {% endblock %}
+
+{% block content %}
+    <!-- <h1 class="text-3xl font-semibold text-center py-6">Welcome to the Reports Page</h1> -->
+
+    <div class="content w-full p-6">
+      <h2 class="text-2xl font-bold text-black">Hello, {{ user.username|capfirst }}! </h2>
+      <!-- <h3>Welcome to the Reports Page</h3> -->
+      <!-- User Details Section -->
+      <div class="bg-gray-800 p-10 rounded-lg shadow-md mb-6">
+        <h4 class="text-xl font-semibold text-teal-400 mb-4">Logged User Details:</h4>
+    
+        <div class="text-lg text-black">
+            <p><span class="font-bold text-teal-300">Full Name:</span> {{ user.get_full_name }}</p>
+            <p><span class="font-bold text-teal-300">Email:</span> {{ user.email }}</p>
+        </div>
+    </div>
+    
+    <!-- Image below the welcome note -->
+    <!-- <div class="flex justify-center my-8">
+        <img src="{% static 'images/logo.jpg' %}" alt="Reports Welcome Image" class="w-1/6 h-auto rounded-lg shadow-lg">
+    </div> -->
+
 {% endblock %}

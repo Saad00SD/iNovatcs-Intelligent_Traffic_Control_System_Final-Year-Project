@@ -50,7 +50,11 @@ def delete_incident(request, id):
 
 @login_required
 def reports(request):
-    return render(request, 'websites/reports.html')
+    return render(request, 'incidentRepo/incident.html')
+
+# @login_required
+# def reports(request):
+#     return render(request, 'websites/reports.html')
 
 # def incident(request):
 #     return render(request, 'incidentRepo/incident.html')
