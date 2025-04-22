@@ -5,160 +5,187 @@
 {% block title %} Incident Report Summary {% endblock %}
 
 {% block content %}
-    <div class="container mx-auto p-4">
-        <h2 class="text-2xl font-semibold mb-4">Incident Report Summary</h2>
+<div class="container mx-auto p-4">
+    <h2 class="text-2xl font-semibold mb-4">Incident Report Summary</h2>
 
-        <!-- Dropdown to select Weekly or Monthly Summary -->
-        <div class="my-4">
-            <form method="get" action="">
-                <label for="report_type" class="mr-2">Select Report Type:</label>
-                <select name="report_type" class="border px-2 py-1 rounded-md">
-                    <option value="weekly" {% if report_type == "weekly" %}selected{% endif %}>Weekly</option>
-                    <option value="monthly" {% if report_type == "monthly" %}selected{% endif %}>Monthly</option>
-                </select>
-                <button type="submit" class="ml-5 bg-blue-0 text-black px-4 py-2 rounded-md">Submit</button>
-            </form>
-        </div>
-
-        <!-- Show Weekly Report Section -->
-        {% if report_type == "weekly" %}
-        <div class="flex justify-between space-x-4">
-            <!-- Weekly Report Section -->
-            <div class="w-full">
-                <h3 class="text-lg font-semibold mb-4 border-b-2 pb-2">Weekly Incident Report</h3>
-
-                <!-- Date Filter Section for Weekly Report -->
-                <div class="my-4">
-                    <form method="get" action="">
-                        <label for="start_date" class="mr-2">Start Date</label>
-                        <input type="date" name="start_date" value="{{ start_date }}" class="border px-2 py-1 rounded-md" required>
-                        <label for="end_date" class="mr-2">End Date</label>
-                        <input type="date" name="end_date" value="{{ end_date }}" class="border px-2 py-1 rounded-md" required>
-                        <input type="hidden" name="report_type" value="weekly">
-                        <button type="submit" class="ml-2 bg-blue-500 text-black px-4 py-2 rounded-md">Filter</button>
-                    </form>
-                </div>
-
-                <!-- Weekly Report Summary -->
-                <div class="my-6">
-                    <h4 class="text-lg font-medium">Weekly Summary</h4>
-                    <ul class="list-disc pl-5">
-                        <li>Total Incidents: {{ total_weekly_incidents }}</li>
-                        <li>Open Incidents: {{ open_weekly_incidents }}</li>
-                        <li>Closed Incidents: {{ closed_weekly_incidents }}</li>
-                    </ul>
-                </div>
-
-                <!-- Weekly Incident Details -->
-                <div class="my-6">
-                    <h3 class="text-lg font-medium">Incident Details</h3>
-                    <table class="table-auto w-full border-collapse mt-4">
-                        <thead>
-                            <tr>
-                                <th class="border p-2">Incident ID</th>
-                                <th class="border p-2">Date</th>
-                                <th class="border p-2">Location</th>
-                                <th class="border p-2">Description</th>
-                                <th class="border p-2">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for report in weekly_incidents %}
-                                <tr>
-                                    <td class="border p-2">{{ report.incident_id }}</td>
-                                    <td class="border p-2">{{ report.date }}</td>
-                                    <td class="border p-2">{{ report.location }}</td>
-                                    <td class="border p-2">{{ report.description }}</td>
-                                    <td class="border p-2">{{ report.status }}</td>
-                                </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="5" class="border p-2 text-center">No incidents found</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Show Monthly Report Section -->
-        {% if report_type == "monthly" %}
-        <div class="flex justify-between space-x-4">
-            <!-- Monthly Report Section -->
-            <div class="w-full">
-                <h2 class="text-2xl font-semibold mb-4 border-b-2 pb-2">Monthly Incident Report</h2>
-
-                <!-- Month & Year Filter Section for Monthly Report -->
-                <div class="my-4">
-                    <form method="get" action="">
-                        <label for="month" class="mr-2">Month</label>
-                        <select name="month" class="border px-2 py-1 rounded-md">
-                            <option value="1" {% if month == 1 %}selected{% endif %}>January</option>
-                            <option value="2" {% if month == 2 %}selected{% endif %}>February</option>
-                            <option value="3" {% if month == 3 %}selected{% endif %}>March</option>
-                            <option value="4" {% if month == 4 %}selected{% endif %}>April</option>
-                            <option value="5" {% if month == 5 %}selected{% endif %}>May</option>
-                            <option value="6" {% if month == 6 %}selected{% endif %}>June</option>
-                            <option value="7" {% if month == 7 %}selected{% endif %}>July</option>
-                            <option value="8" {% if month == 8 %}selected{% endif %}>August</option>
-                            <option value="9" {% if month == 9 %}selected{% endif %}>September</option>
-                            <option value="10" {% if month == 10 %}selected{% endif %}>October</option>
-                            <option value="11" {% if month == 11 %}selected{% endif %}>November</option>
-                            <option value="12" {% if month == 12 %}selected{% endif %}>December</option>
-                        </select>
-
-                        <label for="year" class="mr-2">Year</label>
-                        <input type="number" name="year" value="{{ year }}" class="border px-2 py-1 rounded-md" required>
-
-                        <input type="hidden" name="report_type" value="monthly">
-                        <button type="submit" class="ml-2 bg-blue-500 text-black px-4 py-2 rounded-md">Filter</button>
-                    </form>
-                </div>
-
-                <!-- Monthly Report Summary -->
-                <div class="my-6">
-                    <h3 class="text-lg font-medium">Monthly Summary</h3>
-                    <ul class="list-disc pl-5">
-                        <li>Total Incidents: {{ total_monthly_incidents }}</li>
-                        <li>Open Incidents: {{ open_monthly_incidents }}</li>
-                        <li>Closed Incidents: {{ closed_monthly_incidents }}</li>
-                    </ul>
-                </div>
-
-                <!-- Monthly Incident Details -->
-                <div class="my-6">
-                    <h3 class="text-lg font-medium">Incident Details</h3>
-                    <table class="table-auto w-full border-collapse mt-4">
-                        <thead>
-                            <tr>
-                                <th class="border p-2">Incident ID</th>
-                                <th class="border p-2">Date</th>
-                                <th class="border p-2">Location</th>
-                                <th class="border p-2">Description</th>
-                                <th class="border p-2">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for report in monthly_incidents %}
-                                <tr>
-                                    <td class="border p-2">{{ report.incident_id }}</td>
-                                    <td class="border p-2">{{ report.date }}</td>
-                                    <td class="border p-2">{{ report.location }}</td>
-                                    <td class="border p-2">{{ report.description }}</td>
-                                    <td class="border p-2">{{ report.status }}</td>
-                                </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="5" class="border p-2 text-center">No incidents found</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        {% endif %}
+    <!-- Dropdown to select Weekly or Monthly Summary -->
+    <div class="my-4">
+        <form method="get" action="">
+            <label for="report_type" class="mr-2">Select Report Type:</label>
+            <select name="report_type" class="border px-2 py-1 rounded-md">
+                <option value="weekly" {% if report_type == "weekly" %}selected{% endif %}>Weekly</option>
+                <option value="monthly" {% if report_type == "monthly" %}selected{% endif %}>Monthly</option>
+            </select>
+            <button type="submit" class="ml-5 bg-blue-500 text-black px-4 py-2 rounded-md">Submit</button>
+        </form>
     </div>
+
+    <!-- Weekly Report Section -->
+    {% if report_type == "weekly" %}
+    <div class="flex justify-between space-x-4">
+        <div class="w-full">
+            <h3 class="text-lg font-semibold mb-4 border-b-2 pb-2">Weekly Incident Report</h3>
+
+            <!-- Date Filter Section for Weekly Report -->
+            <div class="my-4">
+                <form method="get" action="">
+                    <label for="start_date" class="mr-2">Start Date</label>
+                    <input type="date" name="start_date" value="{{ start_date }}" class="border px-2 py-1 rounded-md" required>
+                    <label for="end_date" class="mr-2">End Date</label>
+                    <input type="date" name="end_date" value="{{ end_date }}" class="border px-2 py-1 rounded-md" required>
+                    <input type="hidden" name="report_type" value="weekly">
+                    <button type="submit" class="ml-2 bg-blue-500 text-black px-4 py-2 rounded-md">Filter</button>
+                </form>
+            </div>
+
+            <!-- Combined Weekly Summary & Details -->
+            <div class="my-6" id="weekly-report">
+                <h4 class="text-lg font-medium">Weekly Summary</h4>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>Total Incidents: {{ total_weekly_incidents }}</li>
+                    <li>Open Incidents: {{ open_weekly_incidents }}</li>
+                    <li>Closed Incidents: {{ closed_weekly_incidents }}</li>
+                </ul>
+
+                <h3 class="text-lg font-medium">Incident Details</h3>
+                <table class="table-auto w-full border-collapse mt-2">
+                    <thead>
+                        <tr>
+                            <th class="border p-2">Incident ID</th>
+                            <th class="border p-2">Date</th>
+                            <th class="border p-2">Location</th>
+                            <th class="border p-2">Description</th>
+                            <th class="border p-2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in weekly_incidents %}
+                            <tr>
+                                <td class="border p-2">{{ report.incident_id }}</td>
+                                <td class="border p-2">{{ report.date }}</td>
+                                <td class="border p-2">{{ report.location }}</td>
+                                <td class="border p-2">{{ report.description }}</td>
+                                <td class="border p-2">{{ report.status }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="border p-2 text-center">No incidents found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <button onclick="printReport('weekly-report')" class="bg-green-600 text-black px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    Print Weekly Report
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Monthly Report Section -->
+    {% if report_type == "monthly" %}
+    <div class="flex justify-between space-x-4">
+        <div class="w-full">
+            <h2 class="text-2xl font-semibold mb-4 border-b-2 pb-2">Monthly Incident Report</h2>
+
+            <!-- Month & Year Filter Section for Monthly Report -->
+            <div class="my-4">
+                <form method="get" action="">
+                    <label for="month" class="mr-2">Month</label>
+                    <select name="month" class="border px-2 py-1 rounded-md">
+                        <option value="1" {% if month == 1 %}selected{% endif %}>January</option>
+                        <option value="2" {% if month == 2 %}selected{% endif %}>February</option>
+                        <option value="3" {% if month == 3 %}selected{% endif %}>March</option>
+                        <option value="4" {% if month == 4 %}selected{% endif %}>April</option>
+                        <option value="5" {% if month == 5 %}selected{% endif %}>May</option>
+                        <option value="6" {% if month == 6 %}selected{% endif %}>June</option>
+                        <option value="7" {% if month == 7 %}selected{% endif %}>July</option>
+                        <option value="8" {% if month == 8 %}selected{% endif %}>August</option>
+                        <option value="9" {% if month == 9 %}selected{% endif %}>September</option>
+                        <option value="10" {% if month == 10 %}selected{% endif %}>October</option>
+                        <option value="11" {% if month == 11 %}selected{% endif %}>November</option>
+                        <option value="12" {% if month == 12 %}selected{% endif %}>December</option>
+                    </select>
+
+                    <label for="year" class="mr-2">Year</label>
+                    <input type="number" name="year" value="{{ year }}" class="border px-2 py-1 rounded-md" required>
+
+                    <input type="hidden" name="report_type" value="monthly">
+                    <button type="submit" class="ml-2 bg-blue-500 text-black px-4 py-2 rounded-md">Filter</button>
+                </form>
+            </div>
+
+            <!-- Combined Monthly Summary & Details -->
+            <div class="my-6" id="monthly-report">
+                <h3 class="text-lg font-medium">Monthly Summary</h3>
+                <ul class="list-disc pl-5 mb-4">
+                    <li>Total Incidents: {{ total_monthly_incidents }}</li>
+                    <li>Open Incidents: {{ open_monthly_incidents }}</li>
+                    <li>Closed Incidents: {{ closed_monthly_incidents }}</li>
+                </ul>
+
+                <h3 class="text-lg font-medium">Incident Details</h3>
+                <table class="table-auto w-full border-collapse mt-2">
+                    <thead>
+                        <tr>
+                            <th class="border p-2">Incident ID</th>
+                            <th class="border p-2">Date</th>
+                            <th class="border p-2">Location</th>
+                            <th class="border p-2">Description</th>
+                            <th class="border p-2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in monthly_incidents %}
+                            <tr>
+                                <td class="border p-2">{{ report.incident_id }}</td>
+                                <td class="border p-2">{{ report.date }}</td>
+                                <td class="border p-2">{{ report.location }}</td>
+                                <td class="border p-2">{{ report.description }}</td>
+                                <td class="border p-2">{{ report.status }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="border p-2 text-center">No incidents found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <button onclick="printReport('monthly-report')" class="bg-green-600 text-black px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    Print Monthly Report
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function printReport(elementId) {
+        var content = document.getElementById(elementId).innerHTML;
+        var myWindow = window.open('', '', 'width=800,height=600');
+        myWindow.document.write('<html><head><title>Print Report</title>');
+        myWindow.document.write('<style>body { font-family: Arial, sans-serif; }</style>');
+        myWindow.document.write('<style>table { width: 100%; border-collapse: collapse; margin: 20px 0; } table, th, td { border: 1px solid black; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }</style>');
+        myWindow.document.write('</head><body>');
+        myWindow.document.write('<h1 style="text-align: center; font-size: 24px;">iNovatcs</h1>');
+        myWindow.document.write('<h2 style="text-align: center; font-size: 20px;">Intelligent Traffic Control System with Anomaly Detection and Responses</h2>');
+        myWindow.document.write('<hr>');
+        myWindow.document.write(content);
+        myWindow.document.write('<br><hr>');
+        myWindow.document.write('<div style="text-align: right;">');
+        myWindow.document.write('<p>Name: ____________________________</p>');
+        myWindow.document.write('<p>Signature: ________________________</p>');
+        myWindow.document.write('</div>');
+        myWindow.document.write('</body></html>');
+        myWindow.document.close();
+        myWindow.print();
+    }
+</script>
 {% endblock %}
