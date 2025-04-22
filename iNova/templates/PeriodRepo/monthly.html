@@ -1,9 +1,129 @@
 {% extends "base.html" %}
-{% load static tailwind_tags %}
-{% load static %}
-
-{% block title %}  {% endblock %}
-
 {% block content %}
-    <p>Monthly Page</p>
+    <h2 class="text-xl font-semibold">Traffic Signal Report Summary</h2>
+
+    <!-- Filter Form -->
+    <div class="my-4 flex items-center space-x-4">
+        <form method="GET" action="" class="flex items-center space-x-4">
+            <label for="location">Location:</label>
+            <input type="text" name="location" value="{{ request.GET.location }}" class="border px-2 py-1 rounded-md">
+
+            <label for="signal_state">Signal State:</label>
+            <select name="signal_state" id="signal_state" class="border px-2 py-1 rounded-md">
+                <option value="">All</option>
+                <option value="Red" {% if request.GET.signal_state == 'Red' %}selected{% endif %}>Red</option>
+                <option value="Yellow" {% if request.GET.signal_state == 'Yellow' %}selected{% endif %}>Yellow</option>
+                <option value="Green" {% if request.GET.signal_state == 'Green' %}selected{% endif %}>Green</option>
+            </select>
+
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" value="{{ request.GET.start_date }}" class="border px-2 py-1 rounded-md">
+
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" value="{{ request.GET.end_date }}" class="border px-2 py-1 rounded-md">
+
+            <button type="submit" class="bg-blue-500 text-black px-4 py-2 rounded-md">Filter</button>
+        </form>
+
+        <!-- Print Button -->
+        <button onclick="printReport()" class="bg-green-500 text-black px-4 py-2 rounded-md">Print Report</button>
+    </div>
+
+    <!-- Traffic Signal Table -->
+    <div id="print-section">
+        <div class="print-content">
+            <!-- Hidden content for screen, visible for print -->
+            <h3 class="text-lg font-semibold print-visible">iNovatcs</h3>
+            <p class="print-visible"><strong>Location:</strong> {{ request.GET.location }}</p>
+            <p class="print-visible"><strong>Signal State:</strong> {{ request.GET.signal_state }}</p>
+            <p class="print-visible"><strong>Start Date:</strong> {{ request.GET.start_date }}</p>
+            <p class="print-visible"><strong>End Date:</strong> {{ request.GET.end_date }}</p>
+        </div>
+
+        <!-- Table content -->
+        <table class="min-w-full table-auto border-collapse">
+            <thead>
+                <tr>
+                    <th class="border px-4 py-2">Location</th>
+                    <th class="border px-4 py-2">Signal State</th>
+                    <th class="border px-4 py-2">Signal Timer</th>
+                    <th class="border px-4 py-2">Lane 1 Vehicle Count</th>
+                    <th class="border px-4 py-2">Lane 2 Vehicle Count</th>
+                    <th class="border px-4 py-2">Lane 3 Vehicle Count</th>
+                    <th class="border px-4 py-2">Lane 4 Vehicle Count</th>
+                    <th class="border px-4 py-2">Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for signal in traffic_signals %}
+                <tr>
+                    <td class="border px-4 py-2">{{ signal.location }}</td>
+                    <td class="border px-4 py-2">{{ signal.signal_state }}</td>
+                    <td class="border px-4 py-2">{{ signal.signal_timer }} seconds</td>
+                    <td class="border px-4 py-2">{{ signal.lane_1_vehicle_count }}</td>
+                    <td class="border px-4 py-2">{{ signal.lane_2_vehicle_count }}</td>
+                    <td class="border px-4 py-2">{{ signal.lane_3_vehicle_count }}</td>
+                    <td class="border px-4 py-2">{{ signal.lane_4_vehicle_count }}</td>
+                    <td class="border px-4 py-2">{{ signal.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="flex justify-between items-center mb-4 pt-4">
+            <span class="mr-10">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="mt-4">
+        <div class="flex justify-between items-center">
+            <div class="flex space-x-4">
+                {% if page_obj.has_previous %}
+                <a href="?page=1&search={{ search_query }}" class="px-4 py-2 border rounded-lg">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}" class="px-4 py-2 border rounded-lg">Previous</a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}" class="px-4 py-2 border rounded-lg">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}" class="px-4 py-2 border rounded-lg">Last</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Script -->
+    <script>
+        function printReport() {
+            var printContent = document.getElementById('print-section').innerHTML;
+            var originalContent = document.body.innerHTML;
+
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+        }
+    </script>
+
+    <!-- CSS for print visibility -->
+    <style>
+        /* Hide content for screen */
+        .print-visible {
+            display: block;
+        }
+
+        /* Hide content on screen, visible for print */
+        @media screen {
+            .print-visible {
+                display: none;
+            }
+        }
+
+        /* Show content only when printing */
+        @media print {
+            .print-visible {
+                display: block;
+            }
+        }
+    </style>
+
 {% endblock %}

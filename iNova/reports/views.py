@@ -89,11 +89,14 @@ def incident(request):
 
 from .models import TrafficSignal
 @login_required
+
 def traf(request):
     search_query = request.GET.get('search', '')  # Get search query from the URL
 
+    # Query traffic signals with ordering
     traffic_signals = TrafficSignal.objects.all().order_by('location')  # Or 'timestamp' or another field
 
+    # Filter traffic signals based on search query
     if search_query:
         traffic_signals = traffic_signals.filter(
             Q(location__icontains=search_query) |  # Search by location
@@ -102,10 +105,15 @@ def traf(request):
 
     # Pagination: Show 6 records per page
     paginator = Paginator(traffic_signals, 6)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get('page')  # Get the page number from the URL
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'trafficRepo/traf.html', {'traffic_signals': page_obj, 'search_query': search_query})
+    # Return both page_obj and page_obj.object_list to the template
+    return render(request, 'trafficRepo/traf.html', {
+        'traffic_signals': page_obj.object_list,  # Actual list of traffic signals on the current page
+        'page_obj': page_obj,                    # Page object with pagination metadata
+        'search_query': search_query            # Retain the search query in the context
+    })
 
 #     return render(request, 'trafficRepo/traf.html')
 
@@ -210,8 +218,47 @@ def weekly(request):
     })
 
 
+# def monthly(request):
+#     return render(request, 'PeriodRepo/monthly.html')
+
+
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from .models import TrafficSignal
+
+@login_required
 def monthly(request):
-    return render(request, 'PeriodRepo/monthly.html')
+    # Get filters from GET request
+    location_filter = request.GET.get('location', '')
+    signal_state_filter = request.GET.get('signal_state', '')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    # Query traffic signals with filters
+    traffic_signals = TrafficSignal.objects.all()
+
+    if location_filter:
+        traffic_signals = traffic_signals.filter(location__icontains=location_filter)
+    if signal_state_filter:
+        traffic_signals = traffic_signals.filter(signal_state=signal_state_filter)
+    if start_date and end_date:
+        traffic_signals = traffic_signals.filter(timestamp__range=[start_date, end_date])
+
+    # Explicitly order the queryset by a field (e.g., 'timestamp' or 'location')
+    traffic_signals = traffic_signals.order_by('location')  # You can change this to 'location' or any other field
+
+    # Pagination: Show 10 records per page
+    paginator = Paginator(traffic_signals, 5)  # Adjust number of items per page
+    page_number = request.GET.get('page')  # Get the page number from the URL
+    page_obj = paginator.get_page(page_number)
+
+    # Return both page_obj and page_obj.object_list to the template
+    return render(request, 'PeriodRepo/monthly.html', {
+        'page_obj': page_obj,                # Provides paginated data
+        'traffic_signals': page_obj.object_list  # Provides actual records for the current page
+    })
+
+
 
 # def weekly(request):
 #     return render(request, 'weeklyRepo/weekly.html')

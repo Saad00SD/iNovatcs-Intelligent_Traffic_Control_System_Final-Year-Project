@@ -90,36 +90,40 @@ Traffic Reports {% endblock %} {% block content %}
       {% endfor %}
     </tbody>
   </table>
+  <div class="flex justify-between items-center mb-4 pt-4">
+    <span class="mr-10">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+  </div>
+</div>
 
-  <!-- Pagination Controls -->
-  <div class="mt-4">
-    <div class="flex justify-between items-center">
-      <div>
-        <span
-          >Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages}}</span
-        >
-      </div>
-      <div class="flex space-x-4">
-        {% if page_obj.has_previous %}
-        <a href="?page=1" class="px-4 py-2 border rounded-lg">First</a>
-        <a
-          href="?page={{ page_obj.previous_page_number }}"
-          class="px-4 py-2 border rounded-lg"
-          >Previous</a
-        >
-        {% endif %} {% if page_obj.has_next %}
-        <a
-          href="?page={{ page_obj.next_page_number }}"
-          class="px-4 py-2 border rounded-lg"
-          >Next</a
-        >
-        <a
-          href="?page={{ page_obj.paginator.num_pages }}"
-          class="px-4 py-2 border rounded-lg"
-          >Last</a
-        >
-        {% endif %}
-      </div>
+<!-- Pagination Controls -->
+<div class="mt-4">
+  <div class="flex justify-between items-center">
+    <div class="flex space-x-4">
+      {% if page_obj.has_previous %}
+      <a
+        href="?page=1&search={{ search_query }}"
+        class="px-4 py-2 border rounded-lg"
+        >First</a
+      >
+      <a
+        href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}"
+        class="px-4 py-2 border rounded-lg"
+        >Previous</a
+      >
+      {% endif %} {% if page_obj.has_next %}
+      <a
+        href="?page={{ page_obj.next_page_number }}&search={{ search_query }}"
+        class="px-4 py-2 border rounded-lg"
+        >Next</a
+      >
+      <a
+        href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}"
+        class="px-4 py-2 border rounded-lg"
+        >Last</a
+      >
+      {% endif %}
     </div>
   </div>
 </div>
