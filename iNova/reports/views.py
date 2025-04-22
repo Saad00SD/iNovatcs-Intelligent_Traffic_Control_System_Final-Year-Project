@@ -153,13 +153,68 @@ def delete_traffic_signal(request, id):
     # If it's a GET request, render the confirmation page
     return render(request, 'trafficRepo/confirm_delete.html', {'traffic_signal': traffic_signal})
 
+from django.shortcuts import render
+from django.db.models import Count
+from datetime import timedelta
+from django.utils import timezone
+from .models import IncidentReport
+
+
+def weekly(request):
+    today = timezone.now().date()
+
+    report_type = request.GET.get('report_type', 'weekly')  # Default to 'weekly' if no selection is made
+
+    # Weekly Report
+    start_of_week = today - timedelta(days=today.weekday())  # Monday of the current week
+    end_of_week = start_of_week + timedelta(days=6)  # Sunday of the current week
+
+    start_date = request.GET.get('start_date', start_of_week)
+    end_date = request.GET.get('end_date', end_of_week)
+
+    if isinstance(start_date, str):
+        start_date = timezone.datetime.strptime(start_date, '%Y-%m-%d').date()
+    if isinstance(end_date, str):
+        end_date = timezone.datetime.strptime(end_date, '%Y-%m-%d').date()
+
+    weekly_incidents = IncidentReport.objects.filter(date__range=[start_date, end_date])
+    total_weekly_incidents = weekly_incidents.count()
+    open_weekly_incidents = weekly_incidents.filter(Q(status__iexact='Open') | Q(status__iexact='OPEN') | Q(status__iexact='open')).count()
+    closed_weekly_incidents = weekly_incidents.filter(Q(status__iexact='Closed') | Q(status__iexact='CLOSED')).count()
+
+    # Monthly Report
+    month = request.GET.get('month', today.month)
+    year = request.GET.get('year', today.year)
     
+    monthly_incidents = IncidentReport.objects.filter(date__year=year, date__month=month)
+    total_monthly_incidents = monthly_incidents.count()
+    open_monthly_incidents = monthly_incidents.filter(Q(status__iexact='Open') | Q(status__iexact='OPEN') |Q(status__iexact='open')).count()
+    closed_monthly_incidents = monthly_incidents.filter(Q(status__iexact='Closed') | Q(status__iexact='CLOSED') | Q(status__iexact='closed')).count()
+
+    return render(request, 'weeklyRepo/weekly.html', {
+        'weekly_incidents': weekly_incidents,
+        'total_weekly_incidents': total_weekly_incidents,
+        'open_weekly_incidents': open_weekly_incidents,
+        'closed_weekly_incidents': closed_weekly_incidents,
+        'start_date': start_date,
+        'end_date': end_date,
+        'month': month,
+        'year': year,
+        'monthly_incidents': monthly_incidents,
+        'total_monthly_incidents': total_monthly_incidents,
+        'open_monthly_incidents': open_monthly_incidents,
+        'closed_monthly_incidents': closed_monthly_incidents,
+        'report_type': report_type,  # Pass the selected report type to the template
+        'weekly_chart_data': [total_weekly_incidents, open_weekly_incidents, closed_weekly_incidents],
+        'monthly_chart_data': [total_monthly_incidents, open_monthly_incidents, closed_monthly_incidents],
+    })
+
 
 def monthly(request):
     return render(request, 'PeriodRepo/monthly.html')
 
-def weekly(request):
-    return render(request, 'weeklyRepo/weekly.html')
+# def weekly(request):
+#     return render(request, 'weeklyRepo/weekly.html')
 
 def annualy(request):
     return render(request, 'PeriodRepo/annualy.html')

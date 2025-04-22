@@ -82,15 +82,6 @@
         <li class="nav-item">
           <a
             class="nav-link d-flex align-items-center gap-2"
-            href="{% url 'traf' %}"
-          >
-            <svg class="bi"><use xlink:href="#file-earmark" /></svg>
-            Traffic Reports
-          </a>
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link d-flex align-items-center gap-2"
             href="{% url 'incident' %}"
           >
             <svg
@@ -106,6 +97,16 @@
               />
             </svg>
             Incident Reports
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            class="nav-link d-flex align-items-center gap-2"
+            href="{% url 'traf' %}"
+          >
+            <svg class="bi"><use xlink:href="#file-earmark" /></svg>
+            Traffic Reports
           </a>
         </li>
         <!-- <li class="nav-item">
@@ -129,22 +130,23 @@
         <li class="nav-item">
           <a
             class="nav-link d-flex align-items-center gap-2"
-            href="{% url 'monthly' %}"
+            href="{% url 'weekly' %}"
           >
             <svg class="bi"><use xlink:href="#file-earmark-text" /></svg>
-            Monthly Traffic Summary
+            Incident Reports Summary
           </a>
         </li>
         <li class="nav-item">
           <a
             class="nav-link d-flex align-items-center gap-2"
-            href="{% url 'weekly' %}"
+            href="{% url 'monthly' %}"
           >
             <svg class="bi"><use xlink:href="#file-earmark-text" /></svg>
-            Weekly Incident Summary
+            Traffic Reports Summary
           </a>
         </li>
-        <li class="nav-item">
+
+        <!-- <li class="nav-item">
           <a
             class="nav-link d-flex align-items-center gap-2"
             href="{% url 'annualy' %}"
@@ -152,7 +154,7 @@
             <svg class="bi"><use xlink:href="#file-earmark-text" /></svg>
             Annual Comparative
           </a>
-        </li>
+        </li> -->
       </ul>
 
       <hr class="my-3" />
