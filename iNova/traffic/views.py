@@ -9,6 +9,8 @@ from .forms import VideoUploadForm
 from ultralytics import YOLO
 import tempfile
 import os
+from PIL import Image
+import torch
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
@@ -34,16 +36,48 @@ def traffic(request):
     return render(request, 'websites/traffic.html')
 
 def upload_images(request):
-    if request.method == 'POST' and request.FILES.getlist('images'):
+    return render(request, 'Traffic_page/footage_1.html')
+
+def detect_vehicles(image_path):
+    # Load YOLO model (ensure you have YOLOv5 installed and the model is loaded correctly)
+    
+    model  = YOLO(r'anomaly/MLModels/best.pt') # Load the YOLO model (small version for speed)
+    
+    # Load image
+    img = Image.open(image_path)
+
+    # Inference
+    results = model(img)
+
+    # Get the count of detected vehicles (you can filter based on 'car', 'bus', 'truck', etc.)
+    vehicle_count = len([x for x in results.xywh[0] if x[5] in [0, 1, 3, 6]])  # Filter for vehicle classes
+    return vehicle_count
+
+# Function to handle the upload and processing of images
+def process_images(request):
+    if request.method == 'POST' and request.FILES.getlist('image1'):
         fs = FileSystemStorage()
-        # Loop over the list of images uploaded
-        for uploaded_file in request.FILES.getlist('images'):
-            # Save each uploaded file with a unique name
-            fs.save(uploaded_file.name, uploaded_file)
-    return render(request, 'footage_1.html')
+        vehicle_counts = []
+
+        # Loop through the 4 images
+        for i in range(1, 5):
+            uploaded_file = request.FILES.get(f'image{i}')
+            if uploaded_file:
+                # Save the uploaded file
+                file_path = fs.save(uploaded_file.name, uploaded_file)
+                file_url = fs.url(file_path)
+                
+                # Run YOLO model on the uploaded image
+                vehicle_count = detect_vehicles(f'media/{file_path}')
+                vehicle_counts.append(vehicle_count)
+
+        # Return the results as JSON
+        print('vehicle_counts:', vehicle_counts)
+        return JsonResponse({'vehicle_counts': vehicle_counts})
+
+    # return render(request, 'Trafic_page/footage_1.html')
 
 
-model  = YOLO(r'anomaly/MLModels/best.pt')
 
 @login_required
 def footage_1(request):

@@ -10,6 +10,9 @@
         justify-content: center;
         cursor: pointer;
         text-align: center;
+        border: 2px solid #ccc;
+        margin: 10px;
+        position: relative;
     }
 
     .upload-box p {
@@ -26,15 +29,17 @@
         /* Hide the default file input */
     }
 
-    .preview-container {
-        margin-top: 20px;
+    .image-preview {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
     }
 
-    .image-preview {
-        width: 100px;
-        height: 100px;
-        margin: 10px;
-        object-fit: cover;
+    .preview-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-top: 20px;
     }
 
     .results {
@@ -124,27 +129,84 @@
         font-weight: bold;
         position: absolute;
         top: 700px;
-        left: 850px;
+        left: 750px;
+    }
+
+    #uploadDiv1 {
+        position: absolute;
+        top: 80px;
+        left: 250px;
+    }
+
+    #uploadDiv2 {
+        position: absolute;
+        top: 80px;
+        left: 950px;
+    }
+
+    #uploadDiv3 {
+        position: absolute;
+        top: 450px;
+        left: 1200px;
+    }
+
+    #uploadDiv4 {
+        position: absolute;
+        top: 450px;
+        left: 550px;
+    }
+
+    #ss_btn {
+        position: absolute;
+        background-color: red;
+        width: 60px;
+        height: 50px;
+        font-size: 24px;
+        width: 150px;
+        height: 50px;
+        border-radius: 10px;
+        border: none;
+        font-weight: bold;
+        position: absolute;
+        top: 700px;
+        left: 950px;
+
     }
 </style>
 <div class="body" id="body">
-    <div class="upload-box" id="uploadBox">
-        <p>Click to upload 4 images</p>
+    <div class="upload-box" id="uploadDiv1" data-target="imageInput1">
+        <p>Click to upload Image 1</p>
+        <input type="file" id="imageInput1" class="file-input" accept="image/*" />
+        <img id="preview1" class="image-preview" />
     </div>
 
-    <!-- Hidden File Input -->
-    <input type="file" name="images" id="imageInput" class="file-input" multiple accept="image/*" />
+    <div class="upload-box" id="uploadDiv2" data-target="imageInput2">
+        <p>Click to upload Image 2</p>
+        <input type="file" id="imageInput2" class="file-input" accept="image/*" />
+        <img id="preview2" class="image-preview" />
+    </div>
 
-    <!-- Image Previews -->
-    <div class="preview-container" id="imagePreviewContainer"></div>
+    <div class="upload-box" id="uploadDiv3" data-target="imageInput3">
+        <p>Click to upload Image 3</p>
+        <input type="file" id="imageInput3" class="file-input" accept="image/*" />
+        <img id="preview3" class="image-preview" />
+    </div>
 
-    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+    <div class="upload-box" id="uploadDiv4" data-target="imageInput4">
+        <p>Click to upload Image 4</p>
+        <input type="file" id="imageInput4" class="file-input" accept="image/*" />
+        <img id="preview4" class="image-preview" />
+    </div>
+
+    <div class="results" id="results"></div>
+
+    <form method="POST" enctype="multipart/form-data" action="{% url 'process_images' %}" id="uploadForm">
         {% csrf_token %}
-        <button type="submit">Upload Images</button>
+        <!-- <button type="submit" id="s_btn">Upload Images</button> -->
     </form>
 
-    <!-- Results Display -->
-    <div class="results" id="results"></div>
+    <button id="ss_btn" onclick="s()">Uploads Images</button>
+
 
 </div>
 
@@ -153,11 +215,18 @@
 
     let vehicles = [[], [], [], []];
 
-    let v_c = [13, 12, 15, 9];
+    let v_c = [11, 12, 7, 13];
 
     if (v_c[0] > 7) v_c[0] = 7;
 
 
+
+
+
+    function s() {
+        let ss = document.getElementById("ss_btn");
+        ss.innerText = "Uploaded Succefully";
+    }
     let body = document.getElementById("body");
 
     class Car {
@@ -524,35 +593,49 @@
 
         }, 2500);
     }
+    document.querySelectorAll('.upload-box').forEach(div => {
+        div.addEventListener('click', function () {
+            const targetInputId = div.getAttribute('data-target');
+            document.getElementById(targetInputId).click();
+        });
+    });
 
-    const uploadBox = document.getElementById('uploadBox');
-    const imageInput = document.getElementById('imageInput');
-    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-
-    // Trigger file input click when the div is clicked
-    uploadBox.onclick = function () {
-        imageInput.click();
-    };
-
-    // Handle file input change (when user selects images)
-    imageInput.onchange = function (event) {
-        const files = event.target.files;
-        imagePreviewContainer.innerHTML = '';  // Clear any existing previews
-
-        // Loop over the selected files and create image previews
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+    // Handle file input change
+    document.querySelectorAll('.file-input').forEach(input => {
+        input.addEventListener('change', function (e) {
+            const targetImage = document.getElementById('preview' + e.target.id.slice(-1)); // e.target.id corresponds to imageInput1, etc.
             const reader = new FileReader();
-
-            reader.onload = function (e) {
-                const imgElement = document.createElement('img');
-                imgElement.src = e.target.result;
-                imgElement.classList.add('image-preview');
-                imagePreviewContainer.appendChild(imgElement);
+            reader.onload = function (event) {
+                targetImage.src = event.target.result;
             };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    });
 
-            reader.readAsDataURL(file);
-        }
+    // Handle form submission
+    const uploadForm = document.getElementById('uploadForm');
+    uploadForm.onsubmit = function (e) {
+        e.preventDefault();
+        const formData = new FormData(uploadForm);
+
+        fetch('process_images/', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('results');
+                resultsContainer.innerHTML = '';
+                data.vehicle_counts.forEach((count, index) => {
+                    const resultText = `Image ${index + 1}: ${count} vehicles detected.`;
+                    const resultDiv = document.createElement('div');
+                    resultDiv.textContent = resultText;
+                    resultsContainer.appendChild(resultDiv);
+                });
+            })
+            .catch(error => {
+                console.error("Error uploading images:", error);
+            });
     };
 
 
