@@ -98,10 +98,10 @@
         <!-- Main Content Section -->
         <div class="content w-full p-6">
             {% block content %}
-            <h1 class="text-2xl font-bold text-white">Hello, {{ user.username|capfirst }}! Welcome to the Anomaly Detection page</h1>
-
+            <h1 class="text-2xl font-bold text-white">Hello, {{ user.username|capfirst }}! </h1>
+            <h2 class="text-white text-lg mt-2">Welcome to the Anomaly Detection page</h2>
             <!-- User Details Section -->
-            <div class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-md mt-6 mb-6"> 
                 <p class="text-xl font-semibold text-teal-400 mb-2">Logged User Details:</p>
                 <div class="text-lg text-white">
                     <p><span class="font-bold text-teal-300">Full Name:</span> {{ user.get_full_name }}</p>
@@ -118,7 +118,7 @@
                         <option value="{{ location.id }}" {% if location.id == location_details.id %}selected{% endif %}>{{ location.location }}</option>
                     {% endfor %}
                 </select>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded text-sm">Show Location Details</button>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded text-sm"> Load Location Details</button>
             </form>
 
             <!-- Display selected location details -->
@@ -135,7 +135,7 @@
             {% endif %}
 
             <!-- Button to Trigger Modal -->
-            <button id="addLocationBtn" class="bg-green-600 text-white px-6 py-2 rounded mt-6">Add New Location</button>
+            <button id="addLocationBtn" class="bg-green-600 text-white px-6 py-2 rounded mt-6">+Add Location</button>
 
             {% endblock %}
         </div>

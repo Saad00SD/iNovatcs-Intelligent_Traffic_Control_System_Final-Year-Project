@@ -5,7 +5,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Traffic</title>
+    <title>Traffic Signal </title>
     {% tailwind_css %}
     <style>
       /* Sidebar Styling */
@@ -57,7 +57,7 @@
       <!-- Sidebar  -->
       <div id="sidebar" class="sidebar p-4">
         <!-- Sidebar Header -->
-        <h5 class="text-lg font-semibold text-white mb-6">Footages</h5>
+        <h5 class="text-lg font-semibold text-white mb-6">Junctions</h5>
         <ul>
           <li>
             <a href="{% url 'footage_1' %}">
@@ -65,7 +65,7 @@
                 type="button"
                 class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Footage 1
+                Junction 1
               </button>
             </a>
           </li>
@@ -75,7 +75,7 @@
                 type="button"
                 class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Footage 2
+              Junction 2
               </button>
             </a>
           </li>
@@ -85,7 +85,7 @@
                 type="button"
                 class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Footage 3
+              Junction 3
               </button>
             </a>
           </li>
@@ -95,7 +95,7 @@
                 type="button"
                 class="flex items-center w-full p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                Footage 4
+              Junction 4
               </button>
             </a>
           </li>
@@ -106,6 +106,18 @@
       <div class="content w-full p-6">
         {% block content %}
         <!-- Dynamic content from different footages -->
+        <h1 class="text-2xl font-bold text-white">Hello, {{ user.username|capfirst }}! </h1>
+        <h2 class="text-white text-lg mt-2">Welcome to the Traffic Signal Page</h2>
+
+        <!-- User Details Section -->
+        <div class="bg-gray-800 p-6 rounded-lg shadow-md mt-6 mb-6"> 
+            <p class="text-xl font-semibold text-teal-400 mb-2">Logged User Details:</p>
+            <div class="text-lg text-white">
+                <p><span class="font-bold text-teal-300">Full Name:</span> {{ user.get_full_name }}</p>
+                <p><span class="font-bold text-teal-300">Email:</span> {{ user.email }}</p>
+            </div>
+        </div>
+
         {% endblock %}
       </div>
     </div>

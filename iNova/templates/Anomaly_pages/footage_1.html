@@ -23,14 +23,14 @@
         {{ form.video_file }}
 
         <!-- Location Selection Section -->
-        <label for="location" class="text-white">Select Location:</label>
+        <label for="location" class="text-white">Location:</label>
         <select name="location" id="location" class="bg-gray-800 text-white p-2 rounded">
             {% for location in locations %}
                 <option value="{{ location.id }}" {% if location.id == location_details.id %}selected{% endif %}>{{ location.location }}</option>
             {% endfor %}
         </select>
 
-        <button type="submit" class="bg-green-600 text-white px-4 py-1 rounded text-sm">Submit</button>
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded text-sm">Submit</button>
     </form>
 </div>
 
