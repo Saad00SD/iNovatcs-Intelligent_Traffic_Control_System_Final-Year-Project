@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 iNova/media/
 bash.exe.stackdump
+anomaly/twilio_config.py

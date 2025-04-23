@@ -1008,10 +1008,6 @@ select {
   height: 100vh;
 }
 
-.h-28 {
-  height: 7rem;
-}
-
 .w-1\/2 {
   width: 50%;
 }
@@ -1098,10 +1094,6 @@ select {
 
 .cursor-default {
   cursor: default;
-}
-
-.resize-none {
-  resize: none;
 }
 
 .list-inside {
@@ -1748,16 +1740,6 @@ select {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.text-green-600 {
-  --tw-text-opacity: 1;
-  color: rgb(22 163 74 / var(--tw-text-opacity, 1));
-}
-
-.text-gray-800 {
-  --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
 }
 
 .placeholder-gray-400::-moz-placeholder {
