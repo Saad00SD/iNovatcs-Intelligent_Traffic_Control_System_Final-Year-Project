@@ -5,10 +5,16 @@ from django.http import JsonResponse
 from django.db.models import Q  
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
+from .models import TrafficSignal
+from django.core.paginator import Paginator
+from .forms import TrafficSignalForm 
+from django.db.models import Count
+from datetime import timedelta
+from django.utils import timezone
 
 
 
-
+@login_required
 def create_incident(request):
     if request.method == 'POST':
         form = IncidentReportForm(request.POST)
@@ -22,7 +28,7 @@ def create_incident(request):
 
     return render(request, 'incidentRepo/create_incident.html', {'form': form})
 
-
+@login_required
 def update_incident(request, id):
     incident = IncidentReport.objects.get(id=id)
     
@@ -38,8 +44,7 @@ def update_incident(request, id):
 
     return render(request, 'incidentRepo/update_incident.html', {'form': form, 'incident': incident})
 
-
-
+@login_required
 def delete_incident(request, id):
     incident = IncidentReport.objects.get(id=id)
     if request.method == 'POST':
@@ -58,8 +63,6 @@ def reports(request):
 
 # def incident(request):
 #     return render(request, 'incidentRepo/incident.html')
-
-from django.core.paginator import Paginator
 
 
 @login_required
@@ -91,9 +94,7 @@ def incident(request):
     })
 
 
-from .models import TrafficSignal
 @login_required
-
 def traf(request):
     search_query = request.GET.get('search', '')  # Get search query from the URL
 
@@ -121,8 +122,6 @@ def traf(request):
 
 #     return render(request, 'trafficRepo/traf.html')
 
-from .forms import TrafficSignalForm 
-
 @login_required
 def add_traffic_signal(request):
     if request.method == 'POST':
@@ -149,9 +148,6 @@ def update_traffic_signal(request, id):
 
     return render(request, 'trafficRepo/update_traffic_signal.html', {'form': form})
 
-from django.shortcuts import get_object_or_404, render, redirect
-from .models import TrafficSignal
-
 @login_required
 def delete_traffic_signal(request, id):
     # Get the traffic signal object or return a 404 if not found
@@ -165,13 +161,8 @@ def delete_traffic_signal(request, id):
     # If it's a GET request, render the confirmation page
     return render(request, 'trafficRepo/confirm_delete.html', {'traffic_signal': traffic_signal})
 
-from django.shortcuts import render
-from django.db.models import Count
-from datetime import timedelta
-from django.utils import timezone
-from .models import IncidentReport
 
-
+@login_required
 def weekly(request):
     today = timezone.now().date()
 
@@ -224,11 +215,6 @@ def weekly(request):
 
 # def monthly(request):
 #     return render(request, 'PeriodRepo/monthly.html')
-
-
-from django.shortcuts import render
-from django.core.paginator import Paginator
-from .models import TrafficSignal
 
 @login_required
 def monthly(request):

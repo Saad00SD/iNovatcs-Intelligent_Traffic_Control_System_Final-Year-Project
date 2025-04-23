@@ -1,118 +1,562 @@
 {% extends 'websites/traffic.html' %} {% load static %} {% block content %}
 
 <style>
-  /* Set background image for div using static tag in Django */
-  .body {
-    width: 100%;
-    height: 100%;
-    background-image: url("{% static 'images/junction.png' %}"); /* Reference the image from static directory */
-    background-size: cover; /* Make the background cover the div */
-    background-position: center; /* Center the image within the div */
-    background-repeat: no-repeat; /* Prevent image repetition */
-  }
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+    .upload-box {
+        width: 200px;
+        height: 200px;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-align: center;
+    }
 
-  /* Container for the traffic light */
-  .traffic-light-container {
-    position: absolute;
-    width: 25px;
-    height: 100px;
-    background-color: #333;
-    border-radius: 10px;
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-  }
+    .upload-box p {
+        color: #888;
+        font-size: 18px;
+    }
 
-  /* Traffic light colors */
-  .light {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: #555;
-    transition: background-color 0.5s;
-    text-align: center;
-    vertical-align: middle;
-  }
+    .upload-box:hover {
+        background-color: #e0e0e0;
+    }
 
-  /* Apply animation to the traffic lights */
-  .traffic-light-container .light {
-    animation: cycleLights 6s infinite;
-  }
+    .file-input {
+        display: none;
+        /* Hide the default file input */
+    }
 
-  /* Specific colors */
-  .light.red {
-    background-color: red;
-  }
-  .light.yellow {
-    background-color: yellow;
-  }
-  .light.green {
-    background-color: green;
-  }
+    .preview-container {
+        margin-top: 20px;
+    }
 
-  /* Optional: Light off effect */
-  .light.off {
-    background-color: #555;
-  }
+    .image-preview {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        object-fit: cover;
+    }
 
-  #tl2,
-  #tl4 {
-    transform: rotate(90deg);
-  }
+    .results {
+        margin-top: 20px;
+    }
 
-  #tl1 {
-    left: 715px;
-    top: 310px;
-  }
+    #body {
+        width: 90%;
+        height: 90%;
+        background-image: url("{% static 'images/junction.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin: auto;
+        overflow: hidden;
+    }
 
-  #tl2 {
-    left: 890px;
-    top: 230px;
-  }
 
-  #tl3 {
-    left: 965px;
-    top: 405px;
-  }
+    * {
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-  #tl4 {
-    left: 790px;
-    top: 485px;
-  }
+    .traffic-light-container {
+        position: absolute;
+        width: 30px;
+        height: 80px;
+        background-color: #242323;
+        border-radius: 10px;
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .light {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        text-align: center;
+        font-weight: bold;
+        background-color: red;
+    }
+
+    .off {
+        background-color: red;
+    }
+
+    .on {
+        background-color: green;
+    }
+
+    #tl3 {
+        left: 780px;
+        top: 298px;
+    }
+
+    #tl0 {
+        left: 890px;
+        top: 270px;
+        transform: rotate(90deg);
+    }
+
+    #tl1 {
+        left: 910px;
+        top: 380px;
+        transform: rotate(180deg);
+    }
+
+    #tl2 {
+        left: 803px;
+        top: 400px;
+        transform: rotate(270deg);
+    }
+
+    #run {
+        position: absolute;
+        background-color: green;
+        width: 30px;
+        height: 30px;
+        font-size: 24px;
+        width: 150px;
+        height: 50px;
+        border-radius: 10px;
+        border: none;
+        font-weight: bold;
+        position: absolute;
+        top: 700px;
+        left: 850px;
+    }
 </style>
+<div class="body" id="body">
+    <div class="upload-box" id="uploadBox">
+        <p>Click to upload 4 images</p>
+    </div>
 
-<div class="body">
+    <!-- Hidden File Input -->
+    <input type="file" name="images" id="imageInput" class="file-input" multiple accept="image/*" />
+
+    <!-- Image Previews -->
+    <div class="preview-container" id="imagePreviewContainer"></div>
+
+    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+        {% csrf_token %}
+        <button type="submit">Upload Images</button>
+    </form>
+
+    <!-- Results Display -->
+    <div class="results" id="results"></div>
+
+</div>
+
+
+<script>
+
+    let vehicles = [[], [], [], []];
+
+    let v_c = [13, 12, 15, 9];
+
+    if (v_c[0] > 7) v_c[0] = 7;
+
+
+    let body = document.getElementById("body");
+
+    class Car {
+        constructor(id, start) {
+            this.start = start;
+            this.id = id;
+            const car_bodies = ["{% static 'images/car1.png' %}", "{% static 'images/car2.png' %}", "{% static 'images/car3.png' %}", "{% static 'images/car4.png' %}", "{% static 'images/car5.png' %}"];
+            // const car_bodies = ["car1", "car3", "car4", "car5"];
+            this.car_body = car_bodies[Math.floor(Math.random() * car_bodies.length)];
+
+            body.innerHTML += `<div class="car" id=${this.id} style="width: 50px; height: 30px; position: absolute; background-size:cover"></div>`;
+            this.element = document.getElementById(this.id);
+            // this.img = "{% static " + `${this.car_body}` + " %}";
+            this.element.style.backgroundImage = "url('" + this.car_body + "')";
+            this.border = null;
+            this.crossed = 0;
+            const directions = ["straight", "left", "right"];
+            this.turning_side = directions[Math.floor(Math.random() * directions.length)];
+            this.l = 0;
+            this.turning_point = null;
+            if (this.start === 'n') {
+
+                for (let j = 0; j < vehicles[0].length; j++) {
+                    if (vehicles[0][j].turning_side === this.turning_side || (vehicles[0][j].turning_side === "straight" && this.turning_side == "right") || (vehicles[0][j].turning_side === "right" && this.turning_side == "straight")) {
+                        this.l++;
+                    }
+                }
+                this.position = { x: 858, y: 250 - (this.l * 60) };
+                if (this.turning_side === "left") {
+                    this.position.x += 45;
+                    this.turning_point = { x: this.position.x, y: 305 };
+                }
+                if (this.turning_side === "right") {
+                    this.turning_point = { x: 858, y: 382 };
+                }
+                this.moving_axis = [0, 1];
+                this.border = 251;
+
+
+
+            } else if (this.start === 'e') {
+
+                for (let j = 0; j < vehicles[1].length; j++) {
+                    if (vehicles[1][j].turning_side === this.turning_side || (vehicles[1][j].turning_side === "straight" && this.turning_side == "right") || (vehicles[1][j].turning_side === "right" && this.turning_side == "straight")) {
+                        this.l++;
+                    }
+                }
+                this.position = { x: 950 + (this.l * 60), y: 382 };
+                if (this.turning_side === "left") {
+                    this.position.y += 45;
+                    this.turning_point = { x: 900, y: this.position.y };
+                }
+                if (this.turning_side === "right") {
+                    this.turning_point = { x: 815, y: 382 };
+                }
+                this.moving_axis = [-1, 0];
+                this.border = 949;
+
+            } else if (this.start === 's') {
+                for (let j = 0; j < vehicles[2].length; j++) {
+                    if (vehicles[2][j].turning_side === this.turning_side || (vehicles[2][j].turning_side === "straight" && this.turning_side == "right") || (vehicles[2][j].turning_side === "right" && this.turning_side == "straight")) {
+                        this.l++;
+                    }
+                }
+                this.position = { x: 815, y: 470 + (this.l * 60) };
+                if (this.turning_side === "left") {
+                    this.position.x -= 45;
+                    this.turning_point = { x: this.position.x, y: 420 };
+                }
+                if (this.turning_side === "right") {
+                    this.turning_point = { x: 815, y: 345 };
+                }
+                this.moving_axis = [0, -1];
+                this.border = 549;
+
+            } else if (this.start === 'w') {
+
+                for (let j = 0; j < vehicles[3].length; j++) {
+                    if (vehicles[3][j].turning_side === this.turning_side || (vehicles[3][j].turning_side === "straight" && this.turning_side == "right") || (vehicles[3][j].turning_side === "right" && this.turning_side == "straight")) {
+                        this.l++;
+                    }
+                }
+                this.position = { x: 725 - (this.l * 60), y: 345 };
+                if (this.turning_side === "left") {
+                    this.position.y -= 45;
+                    this.turning_point = { x: 770, y: this.position.y };
+                }
+                if (this.turning_side === "right") {
+                    this.turning_point = { x: 858, y: 345 };
+                }
+                this.moving_axis = [1, 0];
+                this.border = 781;
+
+            }
+
+            this.interval = null;
+            this.hasTurned = false;
+            this.updateCSS();
+
+            this.angle = Math.atan2(this.moving_axis[1], this.moving_axis[0]) * (180 / Math.PI);
+            this.element.style.transform = `rotate(${this.angle}deg)`;
+        }
+
+        updateCSS() {
+            this.element = document.getElementById(this.id);
+            this.element.style.left = `${this.position.x}px`;
+            this.element.style.top = `${this.position.y}px`;
+
+            this.element.style.transform = `rotate(${this.angle}deg)`;
+
+
+            // console.log(this.element.style.left, this.element.style.top, this.turning_point, this.id);
+        }
+
+        move(speed = 2) {
+            if (this.interval) {
+                clearInterval(this.interval);
+            }
+            this.interval = setInterval(() => {
+                this.position.x += this.moving_axis[0] * speed;
+                this.position.y += this.moving_axis[1] * speed;
+
+                // console.log("speed:", this.position.x, this.position.y);
+                this.v = Math.abs((this.position.x * this.moving_axis[0]) + (this.position.y * this.moving_axis[1]));
+
+                if (this.start === "n") {
+
+                    if (!this.crossed && (this.v > this.border)) {
+                        this.crossed = 1;
+                        v_c[0]--;
+                    }
+
+
+                    if (!this.hasTurned && this.crossed && (this.turning_side === "right") && (Math.abs(this.v - this.turning_point.y) < 60)) {
+                        this.position.x -= 3;
+                        this.angle += 3
+                        console.log(this.angle)
+                            ; if (this.angle === 180) {
+                                this.hasTurned = true;
+                                this.turn();
+                            }
+                    }
+
+                } else if (this.start === "e") {
+                    if (!this.crossed && (this.v < this.border)) {
+                        this.crossed = 1;
+                        v_c[1]--;
+                    }
+
+                    if (!this.hasTurned && this.crossed && (this.turning_side === "right") && (Math.abs(this.v - this.turning_point.y) < 60)) {
+                        this.position.x -= 3;
+                        this.angle += 3
+                        console.log(this.angle)
+                            ; if (this.angle === 180) {
+                                this.hasTurned = true;
+                                this.turn();
+                            }
+                    }
+
+
+                } else if (this.start === "s") {
+                    if (!this.crossed && (this.v < this.border)) {
+                        this.crossed = 1;
+                        v_c[2]--;
+                    }
+
+                    if (!this.hasTurned && this.crossed && (this.turning_side === "right") && (Math.abs(this.v - this.turning_point.y) < 60)) {
+                        this.position.x += 3;
+                        this.angle += 3
+                        console.log(this.angle)
+                            ; if (this.angle === 0) {
+                                this.hasTurned = true;
+                                this.turn();
+                            }
+                    }
+
+                } else if (this.start === "w") {
+                    if (!this.crossed && (this.v > this.border)) {
+                        this.crossed = 1;
+                        v_c[3]--;
+                    }
+
+                    if (!this.hasTurned && this.crossed && (this.turning_side === "right") && (Math.abs(this.v - this.turning_point.y) < 60)) {
+                        this.position.x -= 3;
+                        this.angle += 3
+                        console.log(this.angle)
+                            ; if (this.angle === 180) {
+                                this.hasTurned = true;
+                                this.turn();
+                            }
+                    }
+
+                }
+
+
+
+                if (!this.hasTurned && this.turning_point) {
+                    if (Math.abs(this.position.x - this.turning_point.x) < 5 && Math.abs(this.position.y - this.turning_point.y) < 5) {
+                        this.turn();
+                        this.angle = Math.atan2(this.moving_axis[1], this.moving_axis[0]) * (180 / Math.PI);
+
+                        // console.log("turned");
+                        this.hasTurned = true;
+                    }
+                }
+                this.updateCSS();
+            }, 30);
+        }
+
+        turn() {
+            if (this.turning_side === "left") {
+                const [x, y] = this.moving_axis;
+                this.moving_axis = [y, -x];
+            } else if (this.turning_side === "right") {
+                const [x, y] = this.moving_axis;
+                this.moving_axis = [-y, x];
+            }
+        }
+
+        stop() {
+            if (!this.crossed) {
+                clearInterval(this.interval);
+                this.interval = null;
+            }
+        }
+    }
+
+    for (let i = 0; i < v_c[0]; i++) {
+        vehicles[0][i] = new Car("n" + i.toString(), 'n');
+    }
+
+    for (let i = 0; i < v_c[1]; i++) {
+        vehicles[1][i] = new Car("e" + i.toString(), 'e');
+    }
+
+    for (let i = 0; i < v_c[2]; i++) {
+        vehicles[2][i] = new Car("s" + i.toString(), 's');
+    }
+
+    for (let i = 0; i < v_c[3]; i++) {
+        vehicles[3][i] = new Car("w" + i.toString(), 'w');
+    }
+
+
+
+    function indexOfMax(arr) {
+        let maxIndex = 0;
+        for (let i = 1; i < arr.length; i++) {
+            if (arr[i] > arr[maxIndex]) {
+                maxIndex = i;
+            }
+        }
+        return maxIndex;
+    }
+
+    body.innerHTML += `
+  
+  <div class="traffic-light-container" id="tl3">
+      <div class="light" id="tl3l">↑</div>
+      <div class="light" id="tl3s">→</div>
+      <div class="light" id="tl3r">↓</div>
+  </div>
+
+  <div class="traffic-light-container" id="tl0">
+      <div class="light" id="tl0l">↑</div>
+      <div class="light" id="tl0s">→</div>
+      <div class="light" id="tl0r">↓</div>
+  </div>
+
   <div class="traffic-light-container" id="tl1">
-    <div class="light red" id="tl1r"></div>
-    <div class="light yellow" id="tl1y"></div>
-    <div class="light green" id="tl1g">↑</div>
+      <div class="light" id="tl1l">↑</div>
+      <div class="light" id="tl1s">→</div>
+      <div class="light" id="tl1r">↓</div>
   </div>
 
   <div class="traffic-light-container" id="tl2">
-    <div class="light red" id="tl2r"></div>
-    <div class="light yellow" id="tl2y"></div>
-    <div class="light green" id="tl2g">↑</div>
+      <div class="light" id="tl2l">↑</div>
+      <div class="light" id="tl2s">→</div>
+      <div class="light" id="tl2r">↓</div>
   </div>
 
-  <div class="traffic-light-container" id="tl3">
-    <div class="light red" id="tl3r"></div>
-    <div class="light yellow" id="tl3y"></div>
-    <div class="light green" id="tl3g">↑</div>
-  </div>
+  
+  <button id="run" onclick=run()>Run</button>
+  `;
 
-  <div class="traffic-light-container" id="tl4">
-    <div class="light red" id="tl4r"></div>
-    <div class="light yellow" id="tl4y"></div>
-    <div class="light green" id="tl4g">↑</div>
-  </div>
-</div>
+    function lights_off() {
+        for (let i = 0; i < 4; i++) {
+
+            let l = document.getElementById(`tl${i}l`);
+            let s = document.getElementById(`tl${i}s`);
+            let r = document.getElementById(`tl${i}r`);
+
+            l.style.backgroundColor = "red";
+            s.style.backgroundColor = "red";
+            r.style.backgroundColor = "red";
+
+        }
+    }
+
+    function run() {
+        document.getElementById("run").disabled = true;
+
+        let prv = null;
+        let idx = indexOfMax(v_c);
+        let mn = Math.min(...v_c);
+        let mx = Math.max(...v_c);
+        let a = null;
+        let b = 0;
+        // console.log(prv != idx);
+        let main = setInterval(() => {
+
+
+            lights_off();
+
+            let l = document.getElementById(`tl${idx}l`);
+            let s = document.getElementById(`tl${idx}s`);
+            let r = document.getElementById(`tl${idx}r`);
+
+
+            l.style.backgroundColor = "green";
+            s.style.backgroundColor = "green";
+            r.style.backgroundColor = "green";
+
+            for (let i = 0; i < vehicles[idx].length; i++) {
+                vehicles[idx][i].move();
+
+            }
+            console.log("vcs:", v_c);
+
+            if (v_c[idx] <= mn) {
+                for (let i = 0; i < vehicles[idx].length; i++) {
+                    vehicles[idx][i].stop();
+                    // console.log("m:", vehicles[idx][i].position, vehicles[idx][i].id);
+
+                }
+                idx = indexOfMax(v_c);
+                mn = Math.min(...v_c);
+                let mx = Math.max(...v_c);
+
+                l = document.getElementById(`tl${idx}l`);
+                s = document.getElementById(`tl${idx}s`);
+                r = document.getElementById(`tl${idx}r`);
+
+
+                l.style.backgroundColor = "orange";
+                s.style.backgroundColor = "orange";
+                r.style.backgroundColor = "orange";
+
+            }
+
+
+
+            if (mx <= 0) {
+                clearInterval(main);
+                for (let i = 0; i < vehicles[idx].length; i++) {
+                    vehicles[idx][i].stop();
+                    // console.log("m:", vehicles[idx][i].position, vehicles[idx][i].id);
+
+                }
+
+
+            }
+
+
+        }, 2500);
+    }
+
+    const uploadBox = document.getElementById('uploadBox');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+    // Trigger file input click when the div is clicked
+    uploadBox.onclick = function () {
+        imageInput.click();
+    };
+
+    // Handle file input change (when user selects images)
+    imageInput.onchange = function (event) {
+        const files = event.target.files;
+        imagePreviewContainer.innerHTML = '';  // Clear any existing previews
+
+        // Loop over the selected files and create image previews
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const imgElement = document.createElement('img');
+                imgElement.src = e.target.result;
+                imgElement.classList.add('image-preview');
+                imagePreviewContainer.appendChild(imgElement);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    };
+
+
+</script>
 
 {% endblock %}
 

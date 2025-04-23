@@ -3,14 +3,17 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from .yolo_fire import run_fire_detection
 from ultralytics import YOLO
-from django.shortcuts import render
 from django.http import StreamingHttpResponse
 from .forms import VideoUploadForm
 import os, uuid, cv2
 from django.contrib.auth.decorators import login_required
 from .models import TrafficData
-from .forms import IncidentReportForm
 from django.http import JsonResponse
+from .forms import IncidentReportForm
+from .forms import LocationForm
+from .twilio_config import send_sms
+import json
+
 
 
 uploaded_video_path = None  # global var for streaming
@@ -24,20 +27,20 @@ model2 = YOLO(r'anomaly/MLModels/best_both.pt')
 
 
 # Views for each footage
-def foot_1(request):
-    return render(request, 'Anomaly_pages/footage_1.html')
+# def foot_1(request):
+#     return render(request, 'Anomaly_pages/footage_1.html')
 
-def foot_2(request):
-    return render(request, 'Anomaly_pages/footage_2.html')
+# def foot_2(request):
+#     return render(request, 'Anomaly_pages/footage_2.html')
 
-def foot_3(request):
-    return render(request, 'Anomaly_pages/footage_3.html')
+# def foot_3(request):
+#     return render(request, 'Anomaly_pages/footage_3.html')
 
-def foot_4(request):
-    return render(request, 'Anomaly_pages/footage_4.html')
+# def foot_4(request):
+#     return render(request, 'Anomaly_pages/footage_4.html')
 
-def anomaly(request):
-    return render(request, 'websites/anomaly.html')
+# def anomaly(request):
+#     return render(request, 'websites/anomaly.html')
 
 
 
@@ -71,7 +74,7 @@ def process_video(request, footage_type):
     })
 
 
-
+@login_required
 def foot_1(request):
     global uploaded_video_path
     result_message = None
@@ -114,7 +117,8 @@ def foot_1(request):
         'locations': locations,  # Pass all locations to the template
         'location_details': location_details,  # Pass the selected location details to the template
 })
-    
+
+@login_required    
 def foot_2(request):
     global uploaded_video_path
     result_message = None
@@ -163,6 +167,7 @@ def foot_2(request):
         'message': message,
     })
 
+@login_required
 def foot_3(request):
     global uploaded_video_path
     result_message = None
@@ -198,7 +203,7 @@ def foot_3(request):
     else:
         form = VideoUploadForm()
 
-    return render(request, 'Anomaly_pages/footage_1.html', {
+    return render(request, 'Anomaly_pages/footage_3.html', {
         'form': form,
         'result_message': result_message,
         'uploaded_video_url': uploaded_video_url,
@@ -206,6 +211,7 @@ def foot_3(request):
         'location_details': location_details,  # Pass the selected location details to the template
     })
 
+@login_required
 def foot_4(request):
     global uploaded_video_path
     result_message = None
@@ -241,7 +247,7 @@ def foot_4(request):
     else:
         form = VideoUploadForm()
 
-    return render(request, 'Anomaly_pages/footage_1.html', {
+    return render(request, 'Anomaly_pages/footage_4.html', {
         'form': form,
         'result_message': result_message,
         'uploaded_video_url': uploaded_video_url,
@@ -268,8 +274,10 @@ def gen_frames_from_uploaded(footage_type):
         # Detect fire or accident based on the model results
         if footage_type == 'fire':
             for i in results:
+
                 f = [int(j) for j in i.boxes.cls]
                 is_fire = f.count(2)  # Detect fire
+                print("R:", f)
 
             annotated = results[0].plot()
             if is_fire:
@@ -371,9 +379,6 @@ def anomaly(request):
 #             'fire_contact': fire_contact,
 #         })
 
-from .twilio_config import send_sms
-from django.http import JsonResponse
-import json
 
 def fetch_authorities(request):
     if request.method == 'POST':
@@ -423,11 +428,6 @@ def fetch_authorities(request):
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
 
-    
-
-from django.http import JsonResponse
-from .forms import LocationForm
-from .models import TrafficData
 
 @login_required
 def add_location(request):
@@ -452,9 +452,6 @@ def add_location(request):
 
     return JsonResponse({'success': False, 'message': 'Invalid method'})
 
-
-from django.http import JsonResponse
-from .forms import IncidentReportForm
 
 def create_incident_report(request):
     if request.method == 'POST':

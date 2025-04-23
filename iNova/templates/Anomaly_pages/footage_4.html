@@ -3,35 +3,47 @@
 {% load static %}
 {% load tz %}
 
-<!-- 1. Heading (First Line) -->
-<h2 class="text-2xl font-bold mb-2">🔥 Fire Detection - Upload Video</h2>
-
-<!-- 2. Date (Second Line, Right Aligned) -->
-<div class="flex justify-end mb-4">
+<!-- Heading and Date in One Line -->
+<div class="flex justify-between items-center mb-4">
+    <!-- Heading -->
+    <h2 class="text-2xl font-bold mb-2">Anomaly Detection - Upload Video</h2>
+    
+    <!-- Date -->
     <div class="text-sm font-semibold text-blue-300 tracking-wide">
         {% now "l, d M Y" %}
     </div>
 </div>
 
-<!-- 3. Upload Form (Third Line, Left Aligned) -->
+<!-- Combined Form for Video Upload and Location Selection -->
 <div class="flex justify-start mb-6">
     <form method="POST" enctype="multipart/form-data" class="flex items-center space-x-2">
         {% csrf_token %}
+        
+        <!-- Video Upload Section -->
         {{ form.video_file }}
-        <button type="submit" class="bg-green-600 text-white px-4 py-1 rounded text-sm">Upload Video</button>
+
+        <!-- Location Selection Section -->
+        <label for="location" class="text-white">Location:</label>
+        <select name="location" id="location" class="bg-gray-800 text-white p-2 rounded">
+            {% for location in locations %}
+                <option value="{{ location.id }}" {% if location.id == location_details.id %}selected{% endif %}>{{ location.location }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded text-sm">Submit</button>
     </form>
 </div>
 
 {% if result_message %}
 <p class="text-green-700">{{ result_message }}</p>
 
+<!-- Show Video and Detection Stream -->
 <div class="w-full mt-10">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-        <!-- Original Video -->
+        <!-- Uploaded Video -->
         <div class="flex flex-col items-start">
             <h3 class="text-xl font-semibold mb-2">🎬 Original Uploaded Video</h3>
-            <video class="rounded shadow-lg" width="100%" height="auto" controls>
+            <video class="rounded shadow-lg" width="80%" height="auto" controls>
                 <source src="{{ uploaded_video_url }}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -39,11 +51,183 @@
 
         <!-- Detection Stream -->
         <div class="flex flex-col items-start">
-            <h3 class="text-xl font-semibold mb-2">🔥 Real-Time Detection Stream</h3>
-            <img class="rounded shadow-lg" src="{% url 'video_feed_footage_4' %}" width="100%" />
+            <h3 class="text-xl font-semibold mb-2"> Real-Time Detection Stream</h3>
+            <img class="rounded shadow-lg" src="{% url 'video_feed_footage_4' %}" width="80%" />
         </div>
+    </div>
+</div>
+
+<!-- Display Location Contact Details -->
+{% if location_details %}
+    <div class="mt-6 flex justify-between">
+        <!-- Left Section: Location Details -->
+        <div class="w-1/2">
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold text-white mb-2">Emergency Contacts for {{ location_details.location }}:</h3>
+                <p class="text-white">Police: {{ location_details.police_contact }}</p>
+                <p class="text-white">Hospital: {{ location_details.hospital_contact }}</p>
+                <p class="text-white">Fire Department: {{ location_details.fire_contact }}</p>
+
+                <!-- Call Buttons for Contacts -->
+                <button onclick="callEmergency('police', {{ location_details.id }})" class="bg-blue-600 text-white px-4 py-2 rounded mt-4">Call Police</button>
+                <button onclick="callEmergency('hospital', {{ location_details.id }})" class="bg-yellow-600 text-white px-4 py-2 rounded mt-2">Call Hospital</button>
+                <button onclick="callEmergency('fire', {{ location_details.id }})" class="bg-red-600 text-white px-4 py-2 rounded mt-2">Call Fire Department</button>
+
+            </div>
+        </div>
+
+        <!-- Right Section: Incident Report Button -->
+        <div class="w-1/2 text-center">
+            <p class="mb-4">Click Here to add New incident report</p>
+            <button id="addIncidentBtn" class="bg-blue-600 text-white px-6 py-2 rounded-lg">+Add Incident</button>
+        </div>
+    </div>
+{% endif %}
+{% endif %}
+
+<script>
+    // Send the alert to the server when any of the buttons are clicked
+    function callEmergency(type, locationId) {
+    fetch("{% url 'fetch_authorities' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()  // Add CSRF token here
+        },
+        body: JSON.stringify({ type: type, location: locationId })  // Send both 'type' and 'location_id'
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Emergency notification sent!');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
+
+
+<!-- Modal for Incident Report -->
+<div id="incidentModal" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center hidden">
+    <div class="bg-gray-900 p-6 rounded-lg w-1/2">
+        <h2 class="text-xl font-semibold text-white mb-4">Create Incident Report</h2>
+        
+        <!-- Incident Report Form -->
+<form id="incidentForm" method="POST">
+    {% csrf_token %}
+
+    <!-- Incident ID -->
+    <label for="incident_id" class="block text-lg text-white mb-2">Incident ID:</label>
+    <input type="text" name="incident_id" id="incident_id" class="border border-gray-300 p-2 w-full mb-4 bg-gray-800 text-white" required>
+
+    <!-- Date -->
+    <label for="date" class="block text-lg text-white mb-2">Date:</label>
+    <input type="date" name="date" id="date" class="border border-gray-300 p-2 w-full mb-4 bg-gray-800 text-white" required>
+
+    <!-- Location -->
+    <label for="location" class="block text-lg text-white mb-2">Location:</label>
+    <input type="text" name="location" id="location" class="border border-gray-300 p-2 w-full mb-4 bg-gray-800 text-white" required>
+
+    <!-- Description -->
+    <label for="description" class="block text-lg text-white mb-2">Description:</label>
+    <textarea name="description" id="description" class="border border-gray-300 p-2 w-full mb-4 bg-gray-800 text-white" required></textarea>
+
+    <!-- Status -->
+    <label for="status" class="block text-lg text-white mb-2">Status:</label>
+    <select name="status" id="status" class="border border-gray-300 p-2 w-full mb-4 bg-gray-800 text-white" required>
+        <option value="Open">Open</option>
+        <option value="Closed">Closed</option>
+        <option value="In Progress">In Progress</option>
+    </select>
+
+    <!-- Submit and Cancel Buttons -->
+    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded">Submit Report</button>
+    <button type="button" id="closeModalBtn" class="bg-red-600 text-white px-6 py-2 rounded mt-4">Cancel</button>
+</form>
 
     </div>
 </div>
-{% endif %}
+
+<script>
+    // Show the modal when the "Create Incident Report" button is clicked
+    document.getElementById('addIncidentBtn').addEventListener('click', function() {
+        document.getElementById('incidentModal').classList.remove('hidden');
+    });
+
+    // Close the modal when the "Cancel" button is clicked
+    document.getElementById('closeModalBtn').addEventListener('click', function() {
+        document.getElementById('incidentModal').classList.add('hidden');
+    });
+
+    // Handle form submission using AJAX
+    document.getElementById('incidentForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent normal form submission
+
+        // Collect form data
+        const formData = new FormData(this);
+
+        // Prepare the request to send data to the server
+        fetch("{% url 'create_incident_report' %}", {  // Ensure this matches the URL pattern
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Incident report submitted successfully!');  // Display success message
+                document.getElementById('incidentModal').classList.add('hidden');  // Close modal
+            } else {
+                alert('Error submitting the report!');  // Show failure message
+                if (data.errors) {
+                    console.log(data.errors);  // Optionally log errors in the console
+                }
+            }
+        })
+        .catch(error => {
+            alert('Error submitting the report!');
+            console.log(error);  // Log the error for debugging
+        });
+    });
+
+
+    // Function to get the CSRF token from the cookie
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Send the alert to the server when any of the buttons are clicked
+    function callEmergency(type, locationId) {
+    fetch("{% url 'fetch_authorities' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()  // Add CSRF token here
+        },
+        body: JSON.stringify({ type: type, location: locationId })  // Send both 'type' and 'location_id'
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Emergency notification sent!');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+</script>
+
+
+
+
 {% endblock %}
